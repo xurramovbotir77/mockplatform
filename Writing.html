@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>IELTS Writing Test</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial, sans-serif; background-color: #ffffff; line-height: 1.4; font-size: 16px; padding-bottom: 80px; }
+
+/* Hidden by default */
+.header { background: #fff; padding: 12px 20px; border-bottom: 1px solid #e0e0e0; display: none; justify-content: space-between; align-items: center; position: fixed; top: 0; left: 0; right: 0; z-index: 100; height: 60px; }
+.main-container { margin-top: 60px; display: none; background: #fff; }
+.nav-row { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; padding: 0; display: none; align-items: center; height: 70px; z-index: 100; border-top: 1px solid #e0e0e0; }
+
+/* Panels */
+.panels-container { display: flex; height: calc(100vh - 130px); overflow: hidden; }
+.left-panel { width: 50%; padding: 20px; border-right: 1px solid #e0e0e0; overflow-y: auto; }
+.right-panel { width: 50%; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; }
+
+/* Part header */
+.part-header { background: #f1f2ec; padding: 15px; border-radius: 5px; margin-bottom: 20px; border: 1px solid #e0e0e0; }
+.part-header p { margin: 0; }
+.hidden { display: none; }
+
+/* Task prompt */
+.task-prompt { padding: 15px; margin: 15px 0; border: 1px solid #000; font-style: italic; }
+.task-prompt p { margin-bottom: 10px; }
+.task-prompt p:last-child { margin-bottom: 0; }
+
+/* Writing area */
+.writing-area { flex: 1; display: flex; flex-direction: column; }
+.writing-textarea {
+  border: 1px solid #ccc; padding: 15px; font-size: 16px; font-family: Arial, sans-serif;
+  line-height: 1.6; resize: none; outline: none; width: 100%; flex: 1; min-height: 400px;
+  /* Disable spell/grammar check underlines */
+  -webkit-spellcheck: false;
+}
+.writing-textarea:focus { border-color: #4a90e2; }
+.writing-textarea:disabled { background: #f5f5f5 !important; cursor: not-allowed; }
+.word-count { text-align: right; margin-top: 8px; font-size: 14px; color: #666; }
+.word-count-num { font-weight: 700; color: #333; }
+
+/* Chart/image */
+.chart-container { text-align: center; margin: 15px 0; }
+.chart-container img { max-width: 100%; height: auto; border: 1px solid #ccc; }
+
+/* Bottom nav */
+.footer__questionWrapper___1tZ46 { flex: 1; display: flex; align-items: center; position: relative; border-right: 1px solid #e0e0e0; }
+.footer__questionNo___3WNct { background: none; border: none; font-size: 16px; font-weight: 600; color: #333; cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; width: 100%; height: 100%; padding: 0 20px; justify-content: center; }
+.footer__questionNo___3WNct:hover { background: #f8f9fa; }
+.footer__questionWrapper___1tZ46.selected .footer__questionNo___3WNct { border-top: 3px solid #333; }
+.footer__questionWrapper___1tZ46.completed::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: #28a745; }
+.part-title { font-size: 16px; font-weight: bold; }
+.attemptedCount { font-size: 13px; color: #666; font-weight: 400; }
+.footer__deliverButton___3FM07 { background: #dc3545; color: white; border: none; padding: 10px 20px; border-radius: 4px; font-size: 15px; font-weight: 600; cursor: pointer; margin-right: 20px; flex-shrink: 0; }
+.footer__deliverButton___3FM07:hover { background: #c82333; }
+
+/* Timer */
+.timer-display { font-size: 18px; font-weight: 700; color: #333; }
+.timer-display.warning { color: #e74c3c; }
+
+/* Header logo */
+.header-logo { display: flex; align-items: center; gap: 10px; }
+.header-logo img { height: 36px; object-fit: contain; }
+
+/* Animations */
+@keyframes cardIn { from { opacity: 0; transform: translateY(24px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.4); opacity: .7; } }
+@keyframes shake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+
+/* Login screen */
+.login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); display: flex; justify-content: center; align-items: center; z-index: 10000; }
+.login-content { background: rgba(255,255,255,0.97); padding: 44px 40px; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.35); max-width: 400px; width: 90%; text-align: center; animation: cardIn .5s cubic-bezier(.22,1,.36,1); }
+.login-logo { margin-bottom: 24px; }
+.login-logo img { width: 100px; height: 100px; object-fit: contain; }
+.login-content h1 { color: #1a1a2e; font-size: 22px; margin-bottom: 6px; font-weight: 700; }
+.login-content .subtitle { color: #888; font-size: 14px; margin-bottom: 28px; }
+.form-group { margin-bottom: 18px; text-align: left; }
+.form-group label { display: block; margin-bottom: 7px; color: #444; font-size: 13px; font-weight: 600; letter-spacing: .3px; text-transform: uppercase; }
+.form-group input { width: 100%; padding: 12px 16px; border: 2px solid #e8ecf0; border-radius: 10px; font-size: 15px; box-sizing: border-box; transition: border-color .2s; background: #f9fafb; }
+.form-group input:focus { outline: none; border-color: #0f3460; background: #fff; }
+.login-button { width: 100%; background: linear-gradient(135deg, #0f3460, #1a6eb5); color: white; border: none; padding: 14px 20px; font-size: 15px; font-weight: 700; border-radius: 10px; cursor: pointer; margin-top: 8px; transition: transform .15s, box-shadow .15s; }
+.login-button:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(15,52,96,.35); }
+.error-message { color: #e53e3e; font-size: 13px; margin-top: 10px; display: none; }
+
+/* Candidate screen */
+.candidate-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); display: none; justify-content: center; align-items: center; z-index: 10000; }
+.candidate-content { background: rgba(255,255,255,0.97); padding: 44px 40px; border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,.35); max-width: 450px; width: 90%; text-align: center; animation: cardIn .5s cubic-bezier(.22,1,.36,1); }
+.candidate-logo { margin-bottom: 20px; }
+.candidate-logo img { width: 100px; height: 100px; object-fit: contain; }
+.candidate-content h1 { color: #1a1a2e; font-size: 22px; margin-bottom: 8px; font-weight: 700; }
+.candidate-content .subtitle { color: #888; font-size: 14px; margin-bottom: 28px; }
+.candidate-id-input { width: 100%; padding: 14px 16px; border: 2px solid #e8ecf0; border-radius: 10px; font-size: 20px; text-align: center; letter-spacing: 4px; font-weight: 700; box-sizing: border-box; background: #f9fafb; transition: border-color .2s; }
+.candidate-id-input:focus { outline: none; border-color: #0f3460; background: #fff; }
+.candidate-button { width: 100%; background: linear-gradient(135deg, #0f3460, #1a6eb5); color: white; border: none; padding: 14px 20px; font-size: 15px; font-weight: 700; border-radius: 10px; cursor: pointer; margin-top: 18px; transition: transform .15s, box-shadow .15s; }
+.candidate-button:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(15,52,96,.35); }
+.back-button { background: none; color: #999; border: none; padding: 10px 20px; font-size: 13px; border-radius: 6px; cursor: pointer; margin-top: 12px; width: 100%; transition: color .2s; }
+.back-button:hover { color: #555; }
+
+/* Intro screen */
+.intro-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); display: none; justify-content: center; align-items: center; z-index: 10000; flex-direction: column; }
+.intro-inner { text-align: center; color: white; padding: 40px; max-width: 700px; }
+.intro-logo { margin-bottom: 32px; opacity: 0; animation: fadeUp .6s .2s forwards; }
+.intro-logo img { width: 110px; height: 110px; object-fit: contain; filter: brightness(0) invert(1); }
+.intro-title { font-size: 42px; font-weight: 800; letter-spacing: -1px; margin-bottom: 10px; opacity: 0; animation: fadeUp .6s .4s forwards; }
+.intro-subtitle { font-size: 16px; color: rgba(255,255,255,.6); margin-bottom: 48px; opacity: 0; animation: fadeUp .6s .6s forwards; }
+.intro-candidate-badge { display: inline-flex; align-items: center; gap: 10px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 50px; padding: 10px 24px; font-size: 15px; color: white; margin-bottom: 48px; opacity: 0; animation: fadeUp .6s .8s forwards; backdrop-filter: blur(10px); }
+.intro-badge-dot { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; animation: pulse 1.5s infinite; }
+.intro-cards { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 48px; opacity: 0; animation: fadeUp .6s 1s forwards; }
+.intro-card { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15); border-radius: 12px; padding: 20px 24px; min-width: 140px; backdrop-filter: blur(6px); }
+.intro-card-num { font-size: 32px; font-weight: 800; color: #60a5fa; line-height: 1; }
+.intro-card-label { font-size: 12px; color: rgba(255,255,255,.5); margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+.intro-btn { background: white; color: #0f3460; border: none; padding: 16px 52px; font-size: 16px; font-weight: 800; border-radius: 50px; cursor: pointer; opacity: 0; animation: fadeUp .6s 1.2s forwards; transition: transform .15s, box-shadow .15s; box-shadow: 0 4px 20px rgba(0,0,0,.3); }
+.intro-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,.4); }
+
+/* Completion screen */
+.completion-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; display: none; justify-content: center; align-items: center; z-index: 10000; flex-direction: column; text-align: center; padding: 20px; }
+.completion-message { font-size: 32px; font-weight: 600; color: #333; margin-bottom: 40px; line-height: 1.4; }
+.navigation-button { background: #dc2626; color: white; border: none; padding: 16px 32px; font-size: 18px; font-weight: 600; border-radius: 8px; cursor: pointer; text-decoration: none; display: inline-block; }
+
+/* Dark mode */
+body.dark { background: #121212; color: #e0e0e0; }
+body.dark .header { background: #1e1e1e; border-bottom-color: #333; }
+body.dark .main-container { background: #121212; }
+body.dark .part-header { background: #2a2a2a; border-color: #3a3a3a; color: #e0e0e0; }
+body.dark .left-panel { border-right-color: #333; }
+body.dark .writing-textarea { background: #1e1e1e; border-color: #444; color: #e0e0e0; }
+body.dark .writing-textarea:focus { border-color: #4a90e2; }
+body.dark .writing-textarea:disabled { background: #2a2a2a !important; }
+body.dark .nav-row { background: #1e1e1e; border-top-color: #333; }
+body.dark .footer__questionNo___3WNct { color: #ccc; }
+body.dark .footer__questionNo___3WNct:hover { background: #2a2a2a; }
+body.dark .footer__questionWrapper___1tZ46 { border-right-color: #333; }
+body.dark .task-prompt { border-color: #555; color: #ddd; }
+body.dark .completion-screen { background: #121212; color: #e0e0e0; }
+body.dark .completion-message { color: #e0e0e0; }
+body.dark .timer-display { color: #e0e0e0; }
+body.dark .header-logo span { color: #e0e0e0; }
+body.dark .word-count { color: #aaa; }
+body.dark .word-count-num { color: #e0e0e0; }
+
+#dark-toggle { background: none; border: 1px solid #ccc; border-radius: 6px; padding: 5px 10px; cursor: pointer; font-size: 18px; line-height: 1; }
+body.dark #dark-toggle { border-color: #4a5a7a; background: #2a3a5a; }
+
+.shake { animation: shake 0.5s ease-in-out; }
+
+@media (max-width: 768px) {
+  .panels-container { flex-direction: column; height: auto; }
+  .left-panel, .right-panel { width: 100%; border-right: none; }
+  .left-panel { border-bottom: 1px solid #e0e0e0; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="login-screen">
+  <div class="login-content">
+    <div class="login-logo"><img src="logo.png" alt="Logo" onerror="this.style.display='none'"/></div>
+    <h1>IELTS Writing Test</h1>
+    <p class="subtitle">Enter your password to continue</p>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input id="password" type="password" placeholder="••••••••"/>
+    </div>
+    <button class="login-button" onclick="handleLogin()">Login</button>
+    <div class="error-message" id="login-error">Incorrect password. Please try again.</div>
+  </div>
+</div>
+
+<!-- CANDIDATE ID -->
+<div class="candidate-screen" id="candidate-screen">
+  <div class="candidate-content">
+    <div class="candidate-logo"><img src="logo.png" alt="Logo" onerror="this.style.display='none'"/></div>
+    <h1>Candidate Verification</h1>
+    <p class="subtitle">Enter your candidate ID to proceed</p>
+    <input id="candidate-id-input" class="candidate-id-input" type="text" placeholder="Candidate ID" maxlength="10"/>
+    <div class="error-message" id="candidate-error">Please enter a valid candidate ID (min. 3 characters).</div>
+    <button class="candidate-button" onclick="handleCandidateId()">Continue</button>
+    <button class="back-button" onclick="backToLogin()">← Back to Login</button>
+  </div>
+</div>
+
+<!-- INTRO -->
+<div class="intro-screen" id="intro-screen">
+  <div class="intro-inner">
+    <div class="intro-logo"><img src="logo.png" alt="Logo" onerror="this.style.display='none'"/></div>
+    <div class="intro-title">IELTS Writing</div>
+    <div class="intro-subtitle">Academic Writing Test — Complete both tasks within the time limit</div>
+    <div class="intro-candidate-badge">
+      <div class="intro-badge-dot"></div>
+      <span>Candidate: <strong id="intro-candidate-id"></strong></span>
+    </div>
+    <div class="intro-cards">
+      <div class="intro-card"><div class="intro-card-num">60</div><div class="intro-card-label">Minutes</div></div>
+      <div class="intro-card"><div class="intro-card-num">2</div><div class="intro-card-label">Tasks</div></div>
+      <div class="intro-card"><div class="intro-card-num">400+</div><div class="intro-card-label">Words</div></div>
+    </div>
+    <button class="intro-btn" onclick="startTest()">Start Writing Test</button>
+  </div>
+</div>
+
+<!-- COMPLETION -->
+<div class="completion-screen" id="completion-screen">
+  <div class="completion-message">Test has been completed<br></div>
+</div>
+
+<!-- HEADER -->
+<div class="header" id="main-header">
+  <div class="header-logo">
+    <img src="logo.png" alt="Logo" onerror="this.style.display='none'"/>
+  </div>
+  <div class="timer-display" id="timer-display">60:00</div>
+  <div style="display:flex;align-items:center;gap:14px;">
+    <span style="color:#333;font-size:14px;font-weight:500;">Candidate: <span id="header-candidate-id"></span></span>
+    <button id="dark-toggle" title="Toggle dark mode" onclick="toggleDark()">🌙</button>
+    <button id="logout-btn" onclick="logout()" style="background:#e74c3c;color:white;border:none;padding:6px 12px;border-radius:4px;cursor:pointer;font-size:12px;">Logout</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main-container" id="main-container">
+  <div class="panels-container">
+
+    <!-- LEFT: Question -->
+    <div class="left-panel" id="left-panel">
+      <!-- Part 1 -->
+      <div id="left-part-1" class="writing-part">
+        <div class="part-header">
+          <p><strong>Task 1</strong> — You should spend about 20 minutes on this task. Write at least <strong>150 words</strong>.</p>
+        </div>
+        <div class="task-prompt"<p><strong>The diagram below shows the production of olive oil. </strong></p>
+          <p><strong>Summarise the information by selecting and reporting the main features, and make comparisons where relevant.</strong></p>
+        </div>
+        <div class="chart-container">
+          <img src="graph.jpg" alt="Asian urbanisation graph 1970-2040" onerror="this.style.display='none'"/>
+        </div>
+      </div>
+
+      <!-- Part 2 -->
+      <div id="left-part-2" class="writing-part hidden">
+        <div class="part-header">
+          <p><strong>Task 2</strong> — You should spend about 40 minutes on this task. Write at least <strong>250 words</strong>.</p>
+        </div>
+        <div class="task-prompt">
+          <p><em><strong></strong>Some people believe Zoos should be closed but others think that zoos important for rare animals.</strong></em></p>
+          <br/>
+          <p><em><strong>Discuss both views and give your opinion.</strong></em></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Writing area -->
+    <div class="right-panel">
+      <div class="writing-area">
+        <textarea
+          id="writingTextarea"
+          class="writing-textarea"
+          placeholder="Start writing your response here..."
+          spellcheck="false"
+          autocorrect="off"
+          autocomplete="off"
+          autocapitalize="off"
+          data-gramm="false"
+          data-gramm_editor="false"
+          data-enable-grammarly="false"
+          oninput="updateWordCount()"
+        ></textarea>
+        <div class="word-count">Words: <span class="word-count-num" id="wordCount">0</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="nav-row" id="nav-row">
+  <div class="footer__questionWrapper___1tZ46 selected" id="nav-part-1">
+    <button class="footer__questionNo___3WNct" onclick="switchPart(1)">
+      <div class="part-title">Task 1</div>
+      <div class="attemptedCount" id="count-1">0 of 1</div>
+    </button>
+  </div>
+  <div class="footer__questionWrapper___1tZ46" id="nav-part-2">
+    <button class="footer__questionNo___3WNct" onclick="switchPart(2)">
+      <div class="part-title">Task 2</div>
+      <div class="attemptedCount" id="count-2">0 of 1</div>
+    </button>
+  </div>
+  <button class="footer__deliverButton___3FM07" onclick="submitTest()">Submit ✓</button>
+</nav>
+
+<script>
+// ---- STATE ----
+const CORRECT_PASSWORD = '5784';
+let candidateId = '';
+let isAuthenticated = false;
+let currentPart = 1;
+let timeInSeconds = 3600;
+let timerInterval = null;
+let task1Content = '';
+let task2Content = '';
+let testSubmitted = false;
+
+// ---- AUTH ----
+function handleLogin() {
+  const pw = document.getElementById('password').value;
+  if (pw === CORRECT_PASSWORD) {
+    document.getElementById('login-error').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('candidate-screen').style.display = 'flex';
+    document.getElementById('candidate-id-input').focus();
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+    document.getElementById('password').value = '';
+    document.getElementById('login-screen').querySelector('.login-content').classList.add('shake');
+    setTimeout(() => document.getElementById('login-screen').querySelector('.login-content').classList.remove('shake'), 500);
+  }
+}
+
+function handleCandidateId() {
+  const val = document.getElementById('candidate-id-input').value.trim();
+  if (val.length >= 3) {
+    candidateId = val;
+    isAuthenticated = true;
+    document.getElementById('candidate-error').style.display = 'none';
+    document.getElementById('candidate-screen').style.display = 'none';
+    document.getElementById('intro-candidate-id').textContent = candidateId;
+    document.getElementById('intro-screen').style.display = 'flex';
+  } else {
+    document.getElementById('candidate-error').style.display = 'block';
+    document.getElementById('candidate-id-input').focus();
+    document.getElementById('candidate-screen').querySelector('.candidate-content').classList.add('shake');
+    setTimeout(() => document.getElementById('candidate-screen').querySelector('.candidate-content').classList.remove('shake'), 500);
+  }
+}
+
+function backToLogin() {
+  document.getElementById('candidate-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('password').value = '';
+}
+
+function startTest() {
+  document.getElementById('intro-screen').style.display = 'none';
+  document.getElementById('main-header').style.display = 'flex';
+  document.getElementById('main-container').style.display = 'block';
+  document.getElementById('nav-row').style.display = 'flex';
+  document.getElementById('header-candidate-id').textContent = candidateId;
+  startTimer();
+}
+
+function logout() {
+  if (confirm('Are you sure you want to logout?')) {
+    location.reload();
+  }
+}
+
+// ---- TIMER ----
+function startTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timeInSeconds--;
+    updateTimerDisplay();
+    if (timeInSeconds <= 0) {
+      clearInterval(timerInterval);
+      autoSubmit();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timeInSeconds / 60);
+  const s = timeInSeconds % 60;
+  const el = document.getElementById('timer-display');
+  el.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+  el.classList.toggle('warning', timeInSeconds <= 300);
+}
+
+// ---- PARTS ----
+function switchPart(n) {
+  // Save current
+  if (currentPart === 1) task1Content = document.getElementById('writingTextarea').value;
+  else task2Content = document.getElementById('writingTextarea').value;
+
+  currentPart = n;
+
+  document.querySelectorAll('.writing-part').forEach(p => p.classList.add('hidden'));
+  document.getElementById('left-part-' + n).classList.remove('hidden');
+
+  document.querySelectorAll('.footer__questionWrapper___1tZ46').forEach(w => w.classList.remove('selected'));
+  document.getElementById('nav-part-' + n).classList.add('selected');
+
+  // Load content
+  document.getElementById('writingTextarea').value = n === 1 ? task1Content : task2Content;
+  updateWordCount();
+}
+
+function updateWordCount() {
+  const text = document.getElementById('writingTextarea').value.trim();
+  const wc = text === '' ? 0 : text.split(/\s+/).length;
+  document.getElementById('wordCount').textContent = wc;
+
+  // Save to memory
+  if (currentPart === 1) task1Content = document.getElementById('writingTextarea').value;
+  else task2Content = document.getElementById('writingTextarea').value;
+
+  updateCompletionIndicators();
+}
+
+function updateCompletionIndicators() {
+  const wc1 = task1Content.trim() === '' ? 0 : task1Content.trim().split(/\s+/).length;
+  const wc2 = task2Content.trim() === '' ? 0 : task2Content.trim().split(/\s+/).length;
+
+  const done1 = wc1 >= 150;
+  const done2 = wc2 >= 250;
+
+  document.getElementById('count-1').textContent = done1 ? '1 of 1' : '0 of 1';
+  document.getElementById('count-2').textContent = done2 ? '1 of 1' : '0 of 1';
+  document.getElementById('nav-part-1').classList.toggle('completed', done1);
+  document.getElementById('nav-part-2').classList.toggle('completed', done2);
+}
+
+// ---- SUBMIT ----
+function submitTest() {
+  if (testSubmitted) return;
+  // Save current
+  if (currentPart === 1) task1Content = document.getElementById('writingTextarea').value;
+  else task2Content = document.getElementById('writingTextarea').value;
+
+  const wc1 = task1Content.trim() === '' ? 0 : task1Content.trim().split(/\s+/).length;
+  const wc2 = task2Content.trim() === '' ? 0 : task2Content.trim().split(/\s+/).length;
+
+  if (!task1Content.trim() && !task2Content.trim()) {
+    alert('Please write your responses before submitting.');
+    return;
+  }
+
+  if (!confirm(`Submit writing test?\n\nTask 1: ${wc1} words\nTask 2: ${wc2} words`)) return;
+
+  testSubmitted = true;
+  clearInterval(timerInterval);
+  downloadPDF();
+  setTimeout(() => {
+    document.getElementById('completion-screen').style.display = 'flex';
+  }, 1500);
+}
+
+function autoSubmit() {
+  if (testSubmitted) return;
+  if (currentPart === 1) task1Content = document.getElementById('writingTextarea').value;
+  else task2Content = document.getElementById('writingTextarea').value;
+  testSubmitted = true;
+  downloadPDF();
+  setTimeout(() => {
+    document.getElementById('completion-screen').style.display = 'flex';
+  }, 1500);
+}
+
+// ---- PDF ----
+function downloadPDF() {
+  try {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const date = new Date().toLocaleDateString();
+    const time = new Date().toLocaleTimeString();
+    const LINE_H = 5;
+    const MARGIN = 20;
+    const MAX_Y = 280;
+    const PAGE_W = 170;
+
+    function addPageIfNeeded(y, needed) {
+      if (y + needed > MAX_Y) { doc.addPage(); return MARGIN; }
+      return y;
+    }
+
+    function writeLines(lines, y) {
+      for (const line of lines) {
+        y = addPageIfNeeded(y, LINE_H);
+        doc.text(line, MARGIN, y);
+        y += LINE_H;
+      }
+      return y;
+    }
+
+    doc.setFontSize(20); doc.setFont('helvetica','bold');
+    doc.text('IELTS Writing Test', 105, 18, { align: 'center' });
+    doc.setFontSize(11); doc.setFont('helvetica','normal');
+    doc.text('Candidate: ' + candidateId, MARGIN, 30);
+    doc.text('Date: ' + date + '  Time: ' + time, MARGIN, 37);
+
+    // Task 1
+    doc.setFontSize(15); doc.setFont('helvetica','bold');
+    doc.text('TASK 1', MARGIN, 52);
+    doc.setFontSize(10); doc.setFont('helvetica','normal');
+    const q1 = 'The diagram below shows the production of olive oil. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.';
+    const sq1 = doc.splitTextToSize(q1, PAGE_W);
+    let y = 60;
+    y = writeLines(sq1, y);
+    y += 4;
+    const wc1 = task1Content.trim() === '' ? 0 : task1Content.trim().split(/\s+/).length;
+    y = addPageIfNeeded(y, LINE_H);
+    doc.setFont('helvetica','bold');
+    doc.text('Word count: ' + wc1, MARGIN, y); y += LINE_H + 4;
+    doc.setFont('helvetica','normal');
+    const sr1 = doc.splitTextToSize(task1Content || '[No response]', PAGE_W);
+    y = writeLines(sr1, y);
+
+    doc.addPage();
+
+    // Task 2
+    doc.setFontSize(15); doc.setFont('helvetica','bold');
+    doc.text('TASK 2', MARGIN, 18);
+    doc.setFontSize(10); doc.setFont('helvetica','normal');
+    const q2 = 'Some people believe Zoos should be closed but others think that zoos important for rare animals. Discuss both views and give your opinion.';
+    const sq2 = doc.splitTextToSize(q2, PAGE_W);
+    y = 26;
+    y = writeLines(sq2, y);
+    y += 4;
+    const wc2 = task2Content.trim() === '' ? 0 : task2Content.trim().split(/\s+/).length;
+    y = addPageIfNeeded(y, LINE_H);
+    doc.setFont('helvetica','bold');
+    doc.text('Word count: ' + wc2, MARGIN, y); y += LINE_H + 4;
+    doc.setFont('helvetica','normal');
+    const sr2 = doc.splitTextToSize(task2Content || '[No response]', PAGE_W);
+    y = writeLines(sr2, y);
+
+    doc.save('IELTS_Writing_' + candidateId + '.pdf');
+  } catch(e) { console.error('PDF error:', e); }
+}
+
+// ---- DARK MODE ----
+function toggleDark() {
+  document.body.classList.toggle('dark');
+  document.getElementById('dark-toggle').textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+}
+
+// ---- KEYBOARD ENTER support ----
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    const ls = document.getElementById('login-screen');
+    const cs = document.getElementById('candidate-screen');
+    if (ls && ls.style.display !== 'none' && getComputedStyle(ls).display !== 'none') { handleLogin(); return; }
+    if (cs && cs.style.display !== 'none' && getComputedStyle(cs).display !== 'none') { handleCandidateId(); return; }
+  }
+});
+</script>
+</body>
+</html>
