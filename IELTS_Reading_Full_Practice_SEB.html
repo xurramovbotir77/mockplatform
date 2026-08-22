@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>IELTS Reading Test - Full Practice</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: Arial, sans-serif; background: #fff; line-height: 1.5; font-size: 15px; }
+
+/* ===== SCREENS ===== */
+@keyframes cardIn { from { opacity:0; transform:translateY(24px) scale(.97); } to { opacity:1; transform:none; } }
+@keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:none; } }
+@keyframes pulse { 0%,100%{transform:scale(1);opacity:1;} 50%{transform:scale(1.4);opacity:.7;} }
+
+.login-screen { position:fixed; inset:0; background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460); display:flex; justify-content:center; align-items:center; z-index:10000; }
+.login-content { background:rgba(255,255,255,.97); padding:44px 40px; border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,.35); max-width:400px; width:90%; text-align:center; animation:cardIn .5s cubic-bezier(.22,1,.36,1); }
+.login-logo { margin-bottom:24px; }
+.login-logo img { width:130px; height:130px; object-fit:contain; }
+.login-content h1 { color:#1a1a2e; font-size:22px; margin-bottom:6px; font-weight:700; }
+.login-content .subtitle { color:#888; font-size:14px; margin-bottom:28px; }
+.form-group { margin-bottom:18px; text-align:left; }
+.form-group label { display:block; margin-bottom:7px; color:#444; font-size:13px; font-weight:600; letter-spacing:.3px; text-transform:uppercase; }
+.form-group input { width:100%; padding:12px 16px; border:2px solid #e8ecf0; border-radius:10px; font-size:15px; box-sizing:border-box; transition:border-color .2s; background:#f9fafb; }
+.form-group input:focus { outline:none; border-color:#0f3460; background:#fff; }
+.login-button { width:100%; background:linear-gradient(135deg,#0f3460,#1a6eb5); color:white; border:none; padding:14px 20px; font-size:15px; font-weight:700; border-radius:10px; cursor:pointer; margin-top:8px; transition:transform .15s, box-shadow .15s; }
+.login-button:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(15,52,96,.35); }
+.error-message { color:#e53e3e; font-size:13px; margin-top:10px; display:none; }
+
+.candidate-screen { position:fixed; inset:0; background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460); display:none; justify-content:center; align-items:center; z-index:10000; }
+.candidate-content { background:rgba(255,255,255,.97); padding:44px 40px; border-radius:16px; box-shadow:0 20px 60px rgba(0,0,0,.35); max-width:450px; width:90%; text-align:center; animation:cardIn .5s cubic-bezier(.22,1,.36,1); }
+.candidate-logo img { width:130px; height:130px; object-fit:contain; margin-bottom:20px; }
+.candidate-content h1 { color:#1a1a2e; font-size:22px; margin-bottom:8px; font-weight:700; }
+.candidate-content .subtitle { color:#888; font-size:14px; margin-bottom:28px; }
+.candidate-id-input { width:100%; padding:14px 16px; border:2px solid #e8ecf0; border-radius:10px; font-size:20px; text-align:center; letter-spacing:4px; font-weight:700; box-sizing:border-box; background:#f9fafb; }
+.candidate-id-input:focus { outline:none; border-color:#0f3460; background:#fff; }
+.candidate-button { width:100%; background:linear-gradient(135deg,#0f3460,#1a6eb5); color:white; border:none; padding:14px 20px; font-size:15px; font-weight:700; border-radius:10px; cursor:pointer; margin-top:18px; }
+.candidate-button:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(15,52,96,.35); }
+.back-button { background:none; color:#999; border:none; padding:10px 20px; font-size:13px; border-radius:6px; cursor:pointer; margin-top:12px; width:100%; }
+.back-button:hover { color:#555; }
+
+.intro-screen { position:fixed; inset:0; background:linear-gradient(135deg,#1a1a2e,#16213e,#0f3460); display:none; justify-content:center; align-items:center; z-index:10000; flex-direction:column; }
+.intro-inner { text-align:center; color:white; padding:40px; max-width:700px; }
+.intro-logo { margin-bottom:32px; opacity:0; animation:fadeUp .6s .2s forwards; }
+.intro-logo img { width:130px; height:130px; object-fit:contain; filter:brightness(0) invert(1); }
+.intro-title { font-size:42px; font-weight:800; letter-spacing:-1px; margin-bottom:10px; opacity:0; animation:fadeUp .6s .4s forwards; }
+.intro-subtitle { font-size:16px; color:rgba(255,255,255,.6); margin-bottom:48px; opacity:0; animation:fadeUp .6s .6s forwards; }
+.intro-candidate-badge { display:inline-flex; align-items:center; gap:10px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); border-radius:50px; padding:10px 24px; font-size:15px; color:white; margin-bottom:48px; opacity:0; animation:fadeUp .6s .8s forwards; }
+.intro-badge-dot { width:8px; height:8px; background:#4ade80; border-radius:50%; animation:pulse 1.5s infinite; }
+.intro-cards { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-bottom:48px; opacity:0; animation:fadeUp .6s 1s forwards; }
+.intro-card { background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:12px; padding:20px 24px; min-width:140px; }
+.intro-card-num { font-size:32px; font-weight:800; color:#60a5fa; }
+.intro-card-label { font-size:12px; color:rgba(255,255,255,.5); margin-top:4px; text-transform:uppercase; letter-spacing:1px; }
+.intro-btn { background:white; color:#0f3460; border:none; padding:16px 52px; font-size:16px; font-weight:800; border-radius:50px; cursor:pointer; opacity:0; animation:fadeUp .6s 1.2s forwards; transition:transform .15s, box-shadow .15s; box-shadow:0 4px 20px rgba(0,0,0,.3); }
+.intro-btn:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(0,0,0,.4); }
+
+/* ===== HEADER ===== */
+.header { background:#fff; padding:0 20px; border-bottom:1px solid #e0e0e0; display:none; justify-content:space-between; align-items:center; position:fixed; top:0; left:0; right:0; z-index:100; height:70px; }
+.header-logo img { width:130px; height:56px; object-fit:contain; }
+.timer-display { font-size:16px; font-weight:600; color:#333; }
+.timer-warning { color:#e53e3e !important; }
+.header-right { display:flex; align-items:center; gap:12px; }
+#dark-toggle { background:none; border:1px solid #ccc; border-radius:6px; padding:5px 10px; cursor:pointer; font-size:18px; }
+#logout-btn { background:#e74c3c; color:white; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; font-size:12px; }
+#candidate-label { color:#333; font-size:13px; font-weight:500; }
+
+/* ===== MAIN LAYOUT ===== */
+.main-container { margin-top:70px; display:none; height:calc(100vh - 70px); flex-direction:column; }
+.part-header-bar { background:#f1f2ec; padding:10px 20px; border-bottom:1px solid #e0e0e0; font-size:14px; flex-shrink:0; }
+.part-header-bar strong { margin-right:8px; }
+.panels-container { display:flex; flex:1; overflow:hidden; }
+
+.passage-panel { flex:1; padding:20px 20px 120px; overflow-y:auto; min-width:200px; }
+.resizer { width:8px; cursor:col-resize; background:#f0f0f0; background-image:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="30" viewBox="0 0 8 30"><path d="M3 10h2v2H3zM3 14h2v2H3zM3 18h2v2H3z" fill="%23aaa"/></svg>'); background-repeat:no-repeat; background-position:center; flex-shrink:0; }
+.questions-panel { flex:1; padding:20px 20px 120px; overflow-y:auto; min-width:200px; border-left:1px solid #e0e0e0; }
+
+.reading-passage h4 { font-size:19px; font-weight:bold; margin-bottom:15px; text-align:center; }
+.reading-passage p { margin-bottom:1.1em; }
+.reading-passage .hidden { display:none !important; }
+
+/* ===== QUESTIONS ===== */
+.question { margin-bottom:36px; }
+.question p { margin-bottom:10px; }
+.question-prompt { margin-bottom:18px; }
+.summary-text ul { list-style:none; padding-left:0; }
+.summary-text ul li { margin-bottom:10px; }
+.centered-title { text-align:center; font-weight:bold; margin-bottom:12px; }
+
+.answer-input { border:1px solid #888; border-radius:4px; background:#fff; padding:2px 8px; font-size:14px; height:28px; width:150px; transition:border-color .2s, box-shadow .2s; }
+.answer-input:focus { outline:none; border-color:#4a90e2; box-shadow:0 0 0 2px rgba(74,144,226,.2); }
+.answer-input::placeholder { color:#999; font-weight:bold; text-align:center; }
+select.answer-input { width:auto; min-width:80px; cursor:pointer; }
+
+/* T/F/NG */
+.tf-question { margin-bottom:22px; }
+.tf-question-line { display:flex; align-items:flex-start; margin-bottom:10px; gap:10px; }
+.tf-question-number { border:2px solid #ccc; padding:2px 8px; border-radius:3px; font-weight:bold; white-space:nowrap; }
+.tf-options { padding-left:0; }
+.tf-option { display:flex; align-items:center; gap:10px; padding:10px 14px; background:#fff; cursor:pointer; transition:background .15s; }
+.tf-option:hover { background:#f8fafc; }
+.tf-option:has(input[type="radio"]:checked) { background:#dbeafe; font-weight:600; }
+.tf-option input[type="radio"] { margin-right:8px; }
+
+/* Checkbox group (choose two) */
+.checkbox-group { margin-top:8px; }
+.checkbox-group label { display:block; padding:10px 14px; background:#fff; cursor:pointer; border:1px solid #eee; border-radius:4px; margin-bottom:6px; }
+.checkbox-group label:hover { background:#f5f9ff; }
+.checkbox-group label:has(input[type="checkbox"]:checked) { background:#dbeafe; border-color:#4a90e2; font-weight:600; }
+.checkbox-group input[type="checkbox"] { margin-right:10px; }
+body.dark .checkbox-group label { background:#1e1e1e; color:#e0e0e0; border-color:#3a3a3a; }
+body.dark .checkbox-group label:hover { background:#2a2a2a; }
+body.dark .checkbox-group label:has(input[type="checkbox"]:checked) { background:#2d4a2d; color:#a0e0a0; border-color:#4a90e2; }
+
+/* Single choice */
+.single-choice-container { display:flex; flex-direction:column; gap:8px; margin-top:8px; }
+.single-choice label { display:block; padding:10px 14px; background:#fff; cursor:pointer; border:1px solid #eee; border-radius:4px; }
+.single-choice label:hover { background:#eef5fd; }
+.single-choice label:has(input[type="radio"]:checked) { background:#cfe3f6; border-color:#4a90e2; }
+
+/* Multi choice */
+.multi-choice-option label { display:block; padding:8px 12px; cursor:pointer; }
+.multi-choice-option label:hover { background:#f5f9ff; }
+.multi-choice-option label:has(input[type="radio"]:checked) { background:#dbeafe; font-weight:600; }
+
+/* Matching form */
+.matching-form-container { display:flex; flex-direction:column; gap:10px; margin-top:12px; }
+.matching-form-row { display:flex; align-items:center; gap:12px; }
+.matching-form-label { min-width:140px; font-size:14px; }
+
+/* Drag and drop */
+.drag-item { background:white; border:1px solid #9c9c9c; font-weight:600; padding:4px 10px; border-radius:4px; cursor:move; font-size:14px; transition:all .2s; user-select:none; display:inline-block; }
+.drag-item:hover { background:#e9ecef; }
+.drag-item.dragging { opacity:.5; transform:rotate(2deg); }
+.drop-zone { border:2px dashed #aaa; border-radius:4px; min-height:32px; min-width:60px; padding:3px 6px; display:inline-flex; align-items:center; justify-content:center; transition:background .2s, border-color .2s; font-weight:bold; color:#aaa; vertical-align:middle; }
+.drop-zone.drag-over { background:#e6f4ff; border-color:#4a90e2; }
+.drop-zone.filled { border:2px solid #2c7be5; color:#333; }
+.summary-drop-zone { display:inline-flex; min-width:60px; min-height:28px; border:2px dashed #aaa; border-radius:4px; padding:2px 6px; align-items:center; justify-content:center; font-weight:bold; color:#aaa; vertical-align:middle; transition:background .2s, border-color .2s; }
+.summary-drop-zone.filled { border:2px solid #2c7be5; color:#333; }
+.summary-drop-zone.drag-over { background:#e6f4ff; border-color:#4a90e2; }
+
+.matching-options-bank { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:15px; padding:10px; border:1px solid #ddd; border-radius:5px; background:#f9f9f9; }
+.matching-question-container { display:flex; flex-direction:column; gap:12px; margin-top:15px; }
+.matching-question-item { display:flex; align-items:center; gap:15px; padding:6px 0; }
+.matching-question-item > span { flex:1; font-size:14px; }
+
+.summary-options-bank { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:15px; padding:10px; border:1px solid #ddd; border-radius:5px; background:#f9f9f9; }
+.summary-text { font-size:14px; line-height:1.9; }
+
+/* People table */
+.people-table { width:100%; border-collapse:collapse; border:1px solid #ccc; font-size:14px; margin:10px 0; }
+.people-table th,.people-table td { border:1px solid #ddd; padding:8px 10px; }
+.people-table th { background:#f0f0f0; font-weight:bold; text-align:left; }
+
+/* ===== BOTTOM NAV ===== */
+.nav-row { position:fixed; bottom:0; left:0; right:0; background:#fff; padding:0; display:none; align-items:center; height:80px; z-index:100; overflow-x:auto; overflow-y:hidden; white-space:nowrap; border-top:1px solid #e0e0e0; }
+.footer__questionWrapper___1tZ46 { display:inline-flex; align-items:center; margin-right:15px; flex-shrink:0; }
+.footer__questionNo___3WNct { background:none; border:none; padding:10px 15px; font-size:16px; font-weight:600; color:#333; cursor:pointer; display:flex; align-items:center; gap:5px; }
+.footer__questionNo___3WNct:hover { background:#f8f9fa; }
+.footer__questionWrapper___1tZ46.selected .footer__questionNo___3WNct { border-bottom:3px solid #333; }
+.footer__subquestionWrapper___9GgoP { display:none; gap:2px; margin-left:6px; }
+.footer__questionWrapper___1tZ46.selected .footer__subquestionWrapper___9GgoP { display:flex; }
+.sectionNr { font-size:16px; font-weight:bold; }
+.attemptedCount { font-size:13px; color:#666; margin-left:5px; }
+.subQuestion { background:none; border:1px solid #ccc; border-radius:3px; padding:5px 8px; font-size:13px; cursor:pointer; color:#555; transition:all .2s; }
+.subQuestion:hover { background:#f0f0f0; }
+.subQuestion.active { background:#333; color:white; border-color:#333; }
+.subQuestion.answered { background:#e8f4e8; border-color:#28a745; color:#155724; }
+.subQuestion.answered.active { background:#28a745; color:white; }
+.footer__deliverButton___3FM07 { background:#dc3545; color:white; border:none; padding:10px 20px; border-radius:4px; font-size:16px; font-weight:600; cursor:pointer; margin-left:20px; flex-shrink:0; }
+.footer__deliverButton___3FM07:hover { background:#c82333; }
+
+/* Nav arrows */
+.nav-arrows { position:fixed; bottom:100px; right:20px; display:none; gap:5px; z-index:101; }
+.nav-arrow { width:50px; height:50px; background:#333; color:white; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:bold; }
+.nav-arrow:hover { background:#555; }
+.nav-arrow:disabled { background:#ccc; cursor:not-allowed; }
+
+/* ===== CONTEXT MENU ===== */
+.context-menu { position:fixed; background:white; border:none; border-radius:10px; box-shadow:0 8px 30px rgba(0,0,0,.18); z-index:3000; display:none; min-width:160px; overflow:hidden; }
+.context-menu-item { padding:13px 18px; cursor:pointer; font-size:14px; font-weight:500; display:flex; align-items:center; gap:10px; color:#333; transition:background .12s; }
+.context-menu-item:hover { background:#f0f4ff; }
+.highlight { background:#ffe066; border-radius:2px; cursor:pointer; padding:0 1px; }
+.highlight:hover { background:#ffd000; }
+.comment-highlight { background:#90EE90; position:relative; cursor:help; }
+.comment-tooltip { position:absolute; bottom:100%; left:50%; transform:translateX(-50%); background:#333; color:white; padding:6px 10px; border-radius:4px; font-size:12px; white-space:nowrap; z-index:1000; opacity:0; pointer-events:none; transition:opacity .2s; }
+.comment-highlight:hover .comment-tooltip { opacity:1; }
+
+/* ===== ACTIVE QUESTION ===== */
+.active-question { background:#fffbe6; border-radius:4px; }
+@keyframes flash { 0%{background:#e6f4ff;} 100%{background:transparent;} }
+.flash { animation:flash 1s ease-out; }
+
+/* ===== COMPLETION ===== */
+.completion-screen { position:fixed; inset:0; background:#fff; display:none; justify-content:center; align-items:center; z-index:10000; flex-direction:column; text-align:center; padding:20px; }
+.completion-screen h2 { font-size:28px; margin-bottom:20px; }
+.restart-btn { background:#dc2626; color:white; border:none; padding:14px 30px; font-size:16px; font-weight:600; border-radius:8px; cursor:pointer; }
+
+/* ===== DARK THEME ===== */
+/* ===== DARK THEME ===== */
+body.dark { background: #121212; color: #e0e0e0; }
+body.dark .header { background: #1e1e1e; border-bottom-color: #333; }
+body.dark .part-header-bar { background: #2a2a2a; border-color: #3a3a3a; color: #e0e0e0; }
+body.dark .main-container { background: #121212; }
+body.dark .panels-container { background: #121212; }
+body.dark .passage-panel { background: #121212; color: #d0d0d0; }
+body.dark .questions-panel { background: #121212; border-left-color: #333; color: #d0d0d0; }
+body.dark .resizer { background: #2a2a2a; }
+body.dark .reading-passage { color: #d0d0d0; }
+body.dark .reading-passage h4 { color: #ffffff; }
+body.dark .answer-input { background: #2a2a2a; border-color: #555; color: #e0e0e0; }
+body.dark .answer-input::placeholder { color: #777; }
+body.dark select.answer-input { background: #2a2a2a; color: #e0e0e0; }
+body.dark select.answer-input option { background: #2a2a2a; color: #e0e0e0; }
+body.dark .tf-option { background: #1e1e1e; color: #e0e0e0; }
+body.dark .tf-option:hover { background: #2a2a2a; }
+body.dark .tf-option:has(input[type="radio"]:checked) { background: #2d4a2d; color: #a0e0a0; }
+body.dark .single-choice label { background: #1e1e1e; color: #e0e0e0; }
+body.dark .single-choice label:hover { background: #2a2a2a; }
+body.dark .single-choice label:has(input[type="radio"]:checked) { background: #2d4a2d; color: #a0e0a0; }
+body.dark .multi-choice-option label { color: #e0e0e0; }
+body.dark .multi-choice-option label:hover { background: #2a2a2a; }
+body.dark .multi-choice-option label:has(input[type="radio"]:checked) { background: #2d4a2d; color: #a0e0a0; }
+body.dark .matching-options-bank { background: #1e1e1e; border-color: #3a3a3a; }
+body.dark .summary-options-bank { background: #1e1e1e; border-color: #3a3a3a; }
+body.dark .drag-item { background: #2a2a2a; border-color: #555; color: #e0e0e0; }
+body.dark .drag-item:hover { background: #333; }
+body.dark .drop-zone { border-color: #555; }
+body.dark .drop-zone.filled { border-color: #4a90e2; }
+body.dark .summary-drop-zone { border-color: #555; color: #888; }
+body.dark .summary-drop-zone.filled { border-color: #4a90e2; color: #e0e0e0; }
+body.dark .matching-form-label { color: #d0d0d0; }
+body.dark .people-table th { background: #2a2a2a; color: #e0e0e0; }
+body.dark .people-table td { background: #1e1e1e; color: #e0e0e0; border-color: #333; }
+body.dark .nav-row { background: #1e1e1e; border-top-color: #333; }
+body.dark .footer__questionNo___3WNct { color: #ccc; }
+body.dark .footer__questionNo___3WNct:hover { background: #2a2a2a; }
+body.dark .subQuestion { background: #2a2a2a; border-color: #444; color: #aaa; }
+body.dark .subQuestion:hover { background: #333; }
+body.dark .subQuestion.active { background: #555; border-color: #555; color: white; }
+body.dark .subQuestion.answered { background: #1a3a1a; border-color: #2a6a2a; color: #7ecf8e; }
+body.dark .subQuestion.answered.active { background: #2a6a2a; color: white; }
+body.dark .context-menu { background: #2a2a2a; }
+body.dark .context-menu-item { color: #e0e0e0; }
+body.dark .context-menu-item:hover { background: #333; }
+body.dark .nav-arrow { background: #2a2a2a; }
+body.dark .nav-arrow:hover { background: #444; }
+body.dark .nav-arrow:disabled { background: #1e1e1e; color: #555; }
+body.dark #dark-toggle { border-color: #4a5a7a; background: #2a3a5a; }
+body.dark .highlight { background: #7c4dff55; color: #e0e0e0; border-radius: 2px; }
+body.dark .highlight:hover { background: #7c4dff88; }
+body.dark .comment-highlight { background: #2a5a2a; }
+body.dark .active-question { background: #2a2a1a; }
+body.dark .timer-display { color: #e0e0e0; }
+body.dark #candidate-label { color: #ccc; }
+body.dark .completion-screen { background: #121212; color: #e0e0e0; }
+body.dark .question-prompt p { color: #d0d0d0; }
+body.dark .summary-text { color: #d0d0d0; }
+body.dark .centered-title { color: #ffffff; }
+
+/* Dark toggle button */
+#dark-toggle { background: none; border: 1px solid #ccc; border-radius: 6px; padding: 5px 10px; cursor: pointer; font-size: 18px; line-height: 1; }
+
+/* Fixed Submit button — bottom right */
+.submit-btn-fixed {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  z-index: 200;
+  display: none;
+  box-shadow: 0 4px 18px rgba(220,53,69,.45);
+  transition: background .15s, transform .15s, box-shadow .15s;
+  letter-spacing: .3px;
+}
+.submit-btn-fixed:hover { background: #c82333; transform: translateY(-2px); box-shadow: 0 7px 24px rgba(220,53,69,.55); }
+body.dark .submit-btn-fixed { box-shadow: 0 4px 18px rgba(220,53,69,.3); }
+
+.hidden { display:none !important; }
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="login-screen">
+  <div class="login-content">
+    <div class="login-logo"><img src="logo.png" alt="Logo" onerror="this.style.display='none'"/></div>
+    <h1>IELTS Reading Test</h1>
+    <p class="subtitle">Enter your password to continue</p>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input id="password" type="password" placeholder="••••••••"/>
+    </div>
+    <button class="login-button" type="button" onclick="submitLogin()">Continue →</button>
+    <div class="error-message" id="login-error">Incorrect password. Please try again.</div>
+  </div>
+</div>
+
+<!-- CANDIDATE ID -->
+<div class="candidate-screen" id="candidate-screen">
+  <div class="candidate-content">
+    <div class="candidate-logo"><img src="logo.png" alt="Logo" onerror="this.style.display='none'"/></div>
+    <h1>Candidate Verification</h1>
+    <p class="subtitle">Enter your Candidate ID to proceed</p>
+    <input class="candidate-id-input" id="candidate-id-input" maxlength="12" placeholder="ID" type="text"/>
+    <button class="candidate-button" type="button" onclick="submitCandidate()">Continue →</button>
+    <button class="back-button" id="back-to-login" type="button">← Back</button>
+    <div class="error-message" id="candidate-error">Please enter a valid Candidate ID.</div>
+  </div>
+</div>
+
+<!-- INTRO -->
+<div class="intro-screen" id="intro-screen">
+  <div class="intro-inner">
+    <div class="intro-logo"><img src="logo.png" alt="Logo" onerror="this.textContent='📖'; this.style.fontSize='72px';"/></div>
+    <div class="intro-title">IELTS CRAM MOCK</div>
+    <div class="intro-subtitle">Reading Test · Academic Module</div>
+    <div class="intro-candidate-badge">
+      <span class="intro-badge-dot"></span>
+      <span id="intro-candidate-name"></span>
+      <span style="color:rgba(255,255,255,.4)">·</span>
+      <span style="color:rgba(255,255,255,.5);font-size:13px;">Verified</span>
+    </div>
+    <div class="intro-cards">
+      <div class="intro-card"><div class="intro-card-num">3</div><div class="intro-card-label">Passages</div></div>
+      <div class="intro-card"><div class="intro-card-num">40</div><div class="intro-card-label">Questions</div></div>
+      <div class="intro-card"><div class="intro-card-num">60<span style="font-size:18px;color:rgba(96,165,250,.7)">min</span></div><div class="intro-card-label">Duration</div></div>
+    </div>
+    <button class="intro-btn" id="start-test-btn">Start Test</button>
+  </div>
+</div>
+
+<!-- COMPLETION -->
+<div class="completion-screen" id="completion-screen">
+  <h2>Reading section ended</h2>
+  <a class="restart-btn" href="Writing.html">Please move to writing section</a>
+</div>
+
+<!-- HEADER -->
+<div class="header" id="main-header">
+  <div class="header-logo">
+    <img src="logo.png" alt="Logo" onerror="this.style.display='none'"/>
+  </div>
+  <div class="timer-container">
+    <span class="timer-display" id="timer-display">60:00</span>
+  </div>
+  <div class="header-right">
+    <span id="candidate-label">Candidate: <span id="header-candidate-id"></span></span>
+    <button id="dark-toggle" title="Toggle dark mode">🌙</button>
+    <button id="logout-btn">Logout</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main-container" id="main-container">
+  <div id="part-header-bar" class="part-header-bar">
+    <strong>Part 1</strong> — Read the text and answer questions 1–13.
+  </div>
+  <div class="panels-container">
+
+    <!-- PASSAGE PANEL -->
+    <div class="passage-panel" id="passage-panel">
+
+      <!-- PASSAGE 1 -->
+      <div id="passage-text-1" class="reading-passage">
+        <h4>Why good ideas fail</h4>
+        <p>As part of a marketing course, two marketing experts comment on a hypothetical case study involving TF, a fictional retail giant specializing home furnishing. The experts give concrete solutions and advice to assist students.</p>
+        <p><strong>Hypothetical case study:</strong> TF became a retail success in the 1970s when it succeeded in spotting homeware trends and meeting the needs of its then trendy young customers. However, by 2004, the TF stores were failing and a rethink was clearly necessary. Tibal Fisher, TF's founder and CEO, decided to change its focus under the new brand name of TF's NextStage. His aim was to recapture the now ageing customers that had given him his early success and target consumers aged 60+ with devices and gadgets specifically designed to assist them with the problems associated with ageing: mobile phones with screens that were easy to read; kitchen gadgets with comfortable grips; electronic devices that were easy to set and adjust.</p>
+        <p>TF's market research proved to be very positive, showing strong consumer support for the products. In 2007, the stores were remodelled at a cost of US$40 million and the new brand was launched. Each store was made more comfortable and featured a coffee shop to help increase traffic – Tibal had predicted that if they could get customers into the stores then the products would sell themselves. However, by 2009 it was clear that the idea was a failure and the stores consistently remained empty. Customers complained that the new stores felt like a senior center and reminded them that they were growing old.</p>
+        <p><strong>Feedback from experts:</strong></p>
+        <p><strong>Expert 1: Donna Sturgess, global head of innovation, GlaxoSmithKline</strong></p>
+        <p>The TF team's customer research efforts are a classic case of missing the subconscious associations at work in consumers' minds. Tibal and his executives looked only at surface attitudes. Since those attitudes make up a relatively small part of the total consumer response, the executives are clueless about the reason for the poor sales. It's critical for companies to understand that every customer relates to a brand emotionally, and it's those emotions that trigger - or block – purchases. That's why we've focused on using emotional strategies behind branding for a number of years now.</p>
+        <p>A great example is Alli (pronounced 'ally'), a drug to aid weight loss. The product deals with a highly emotional issue, so in marketing it, we faced the same challenge that the new TF stores are facing: the very thought of buying the product reminds Customers that they have problems they feel negatively about. In the case of TF's NextStage, the problems are age and infirmity. In the case of Alli, the problems are excessive weight and all its consequences. There's always a risk that consumers' negative feelings will discourage them from starting or staying on a diet. So, after extensive market research, we took a number of steps to inject positive emotions into the whole process of using the product. First we came up with a name that sounds like a helpful partner. We also aimed to make the container both beautiful and functional - something that didn't just hold pills but could later be used to store diet guides and recipes. Traditional market research is unlikely to uncover ideas like this, so we use a wide variety of techniques. Even simple techniques such as one-on-one interviews, or ethnographical observation that involves going into people's houses to examine their behavior, can provide valuable data.</p>
+        <p><strong>Expert 2: Alex Lee, president of OXO International, maker of OXO Good Grips household products</strong></p>
+        <p>This retailer can get back on track by remembering a principle that applies to consumers or general and those aged 60+ in particular: they're attracted by brands they associate with the type of people they'd like to be - not the type they really are. That's why marketing campaigns for surf gear feature surfers, not the city dwellers who will wear the products while doing their shopping. I was reminded of this principle a few years ago when we wanted to find out how far we could apply our design philosophy making things easier to use in order to move from our core business, kitchen tools, into other products. We conducted what are known as focus groups, where participants were asked to look at photos of people and pick those they perceived to be users and nonusers of our products. Consistently they picked people who looked fit as the sort who would use our products, and people who looked old and boring as the sort who wouldn't. Yet the participants, all owners of our products, looked a lot more like the latter than the former.</p>
+        <p>Although the needs of elderly users and those with deteriorating vision or dexterity are very much taken into consideration when we develop new designs, we try to offer products that appeal to 20- and 30-year-olds. We believe that referring to these products as helping tools would serve only to harm the brand in our customers' eyes. That's why our philosophy of universal design, which involves creating products that are comfortably useable by the largest possible range of people, is never explicitly stated as part of our marketing position. We've found that market research doesn't need to be very sophisticated. For instance, we have conducted simple surveys in the lobby of our building offering free products in exchange for people's opinions. Some may call this unscientific but we have uncovered great insights this way. Sometimes the most important signals come from an executive's own instincts. In Tibal Fisher's case, this could have told him what his surveys and focus groups didn't: 60-plus-year-olds won't support a business that expects them to act their age.</p>
+      </div>
+      <!-- PASSAGE 2 -->
+      <div id="passage-text-2" class="reading-passage hidden">
+        <h4>Insect decision-making</h4>
+        <p><strong>A</strong>&nbsp;&nbsp;It has long been held that decisions made collectively by large groups of people are more likely to turn out to be accurate than decisions made by individuals The idea goes back to the 'jury theorem' of Nicolas de Condorcet, an 18th-century French philosopher who was one of the first to apply mathematics to the social sciences. Condorcet's theory describes collective decisions, outlining how democratic decisions tend to outperform dictatorial ones. If, for example, each member of a jury has only partial information, the majority decision is more likely to be correct than a decision arrived at by a single juror. Moreover, the probability of a correct decision increases with the size of the jury.</p>
+        <p><strong>B</strong>&nbsp;&nbsp;Now it is becoming clear that group decisions are also extremely valuable for the success of social animals, such as ants, bees, birds and dolphins. Bees make collective decisions, and they do it rather well, according to Christian List of the London School of Economics, who has studied group decision-making in humans and animals. Researchers led by Dr List looked at colonies of honeybees, which in late spring or early summer divide themselves into two colonies once the original colony reaches a certain size. The queen goes off with about two-thirds of the worker bees to live in a new home or nest, leaving a daughter queen in the old nest with the remaining workers. Among the bees that depart are some that have searched for and found some new nest sites, and reported back using a characteristic body movement known as a 'waggle dance' to indicate to the other bees the suitable places they have located. The longer the dance, the better the site. After a while, other bees start to visit the sites signaled by their companions to see for themselves and, on their return, also perform more waggle dances. The process eventually leads to a consensus on the best site and the breakaway swarm migrates. The decision is remarkably reliable, with the bees choosing the best site even when there are only small differences between alternative sites.</p>
+        <p><strong>C</strong>&nbsp;&nbsp;But exactly how do bees reach such a robust consensus? To find out, Or List and his colleagues used a computer generated model of the decision-making process. By experimenting with it they found that, when bees In the model were very good at finding nesting sites but did not share their information, this dramatically slowed down the migration, leaving the swarm homeless and vulnerable. Conversely, bees in the model blindly following the waggle dances of others without first checking whether the site was. in fact, as advertised, led to swift, but often bad decisions. The researchers concluded that the ability of bees to identify successfully and quickly the best site depends on both the bees' interdependence in communicating the whereabouts of the best site. and their independence in confining this information for themselves.</p>
+        <p><strong>D</strong>&nbsp;&nbsp;Another situation in which collective decisions are taken occurs when animals are either isolated from crucial sources of information or dominated by other members of the group. Jose Halloy of the Free University of Brussels in Belgium used robotic cockroaches to subvert the behaviour of living cockroaches and control their decision. making process. In his experiment. the artificial bugs were introduced to the live ones and soon became sufficiently socially integrated that they were perceived by the real cockroaches as equals. By manipulating the robots, which were in the minority. Halloy was able to persuade the living cockroaches to choose an inappropriate shelter – even one which they had rejected before being infiltrated by the robots.</p>
+        <p><strong>E</strong>&nbsp;&nbsp;The way insects put into effect collective decisions can be complex and as important as the decisions themselves. At the University of Bristol, in the UK, Nigel Franks and his colleagues studied how a species of ant establishes a new nest. Franks and his associates reported how the insects reduce the problems associated with making a necessarily swift choice. If the ants' existing nest becomes suddenly threatened, the insects choose certain ants to act as scouts to find a new nest. How quickly they accomplish the transfer to a new home depends not only on how soon the best available site is found, but also on how quickly the migration there can be achieved.</p>
+        <p><strong>F</strong>&nbsp;&nbsp;Once the suitable new nest is identified, the chosen ants begin to lead others, which have made it to the new site or which may simply be in the vicinity, back to the original threatened nest. In this way, those ants which are familiar with the route can help transport for example, the queen and young ants to the new site, and simultaneously show the way to those ants which have been left behind to guard the old nest. In this way the moving processes are accomplished faster and more efficiently. Thus the dynamics of collective decision-making are closely related to the efficient implementation of those decisions. How this might apply to choices that humans make is, as yet, unclear. But it does suggest, even for humans, the importance of recruiting dynamic leaders to a cause, because the most important thing about collective decision-making, as shown by these insect experiments, is to get others to follow.</p>
+      </div>
+
+      <!-- PASSAGE 3 -->
+      <div id="passage-text-3" class="reading-passage hidden">
+        <h4>Marketing And Mind Control</h4>
+        <p style="text-align:center;font-style:italic;">How marketing and advertising appeal to the associative nature of the brain</p>
+        <p>While there had been a long tradition of giving rings as a commitment to marry, the custom of giving diamond engagement rings was in large part manufactured by one of the most effective marketing campaigns in history. In the early 1900s, diamond sales were declining, posing a serious problem for the company that essentially had control over the diamond market. In 1938, this company hired an advertising agency, which proposed reshaping social attitudes toward diamonds. As well as magazines showing film stars draped in diamonds, the agency arranged for movies to incorporate diamond engagement rings into their plots. The campaign culminated with the slogan: 'A diamond is forever.' At the time, the approach was unique. Rather than pushing a brand, the objective was to promote diamonds as the symbol of everlasting love. This was achieved by exploiting the associative nature of the brain: associating neurons activated by the concept of 'love' with neurons that encoded the concept of diamonds. By 1941, diamond sales had increased by 55%.</p>
+        <p>Advertising comes in many forms, from blatant neon signs to subtly embedded products in movies. In each case, the goal is to mould our habits, desires and opinions. Our visual system is targeted by an avalanche of information on the internet, street posters, and billboards and in movie theatres. Our auditory system submits to catchy radio jingles and telemarketers. More surreptitiously, our olfactory system is targeted by variations of vanilla and citrus perfumes aimed at enticing us to linger in a retail outlet. It is difficult to measure how effective these campaigns are, but as in the 'A diamond is forever' campaign, they can be so successful that they change the fabric of our culture. In the case of bottled water, we are swayed by advertising into paying for something that we can obtain for free. Most people cannot distinguish bottled from tap water, much less between brands of bottled water, which is why you rarely hear of a bottled water company proposing a blind taste test.</p>
+        <p>So why is marketing such an effective mind-control technique? It is interesting to consider whether other animals exhibit anything analogous to humans' susceptibility to advertising. If we provide a lab rat with two types of cereal, it will consume approximately the same amount of each. However, if we put that rat with another rat that spent its day eating just one type, when faced with a choice, our rat will now show a preference for the same type as the other rat was eating. Psychologists call this 'socially transmitted food preference'. What many regard as the first documented examples of cultural learning in primates started with a clever monkey that lived in a colony of Japanese monkeys on the island of Koshima. She began taking her dirt-covered sweet potatoes to the river to wash them before eating them. Upon seeing this, a few other open-minded monkeys picked up on the idea. Potato washing then spread from monkey to monkey and, over the course of a few years, most monkeys were eating clean potatoes. Humans are clearly not the only animals to engage in imitation and social learning.</p>
+        <p>Learning by observation can be an extraordinarily valuable brain feature; this is how we learn to communicate and perform motor skills as well as deal with many everyday problems. For example, a newcomer struggling to purchase tickets and navigate the subway system in a foreign city may step back to learn from the people nearby. Humans and other primates exhibit multiple forms of imitative learning and this is called cultural transmission.</p>
+        <p>A component of advertising relies on the marketer's ability to tap into the brain's propensity for imitation. Anybody who has watched TV knows advertisements are disproportionately populated with attractive, successful looking individuals. If we are going to imitate someone, we are more inclined to imitate those who appear to be popular and appealing. Although not all researchers are convinced by the findings, a number of studies indicate that some animals also imitate dominant members of their group. Primatologist Frans de Waal provides anecdotal evidence of preferential imitation among chimpanzees. He noted that in one particular group the dominant male was hurt and was limping as a result. Soon afterwards many other males in the group were also limping – something very unlikely if a non-dominant male had been injured.</p>
+        <p>Imitation is undoubtedly an invaluable ability, but often our propensity to imitate generalises indiscriminately, leading to poor decisions. When athlete Dick Fosbury revolutionised the high jump by jumping over the bar backward in 1968, imitators obviously copied his jumping style, not his brand of sports shoes. However, today, sports people appear in advertisements asking us to buy the laptops or sports drinks that they promote. Rationally, we know these people's success did not depend on these products, so it seems our propensity to purchase products relates more to neural programs that evolved to encourage imitation of those further up the social ladder. Today, companies engage in stealth marketing campaigns in which people are paid to frequent bars or websites to covertly promote certain products. Companies also perform studies in which they track the eye movements of people viewing displays, and carefully craft names, packages and jingles associated with their products. While we may like to believe that manipulation on a grand scale would not be possible, that's not to say that advertising is innately harmful. To the contrary, the marketing of products or ideas is essential to human culture. The point is that we should ensure our choices reflect our actual goals and desires, and we must distinguish between the dissemination of information which is for our own good, and our manipulation for the benefit of companies.</p>
+      </div>
+
+    </div><!-- /passage-panel -->
+
+    <div class="resizer" id="resizer"></div>
+
+    <!-- QUESTIONS PANEL -->
+    <div class="questions-panel" id="questions-panel">
+
+      <!-- QUESTIONS SET 1 -->
+      <!-- QUESTIONS SET 1 -->
+      <div id="questions-1" class="question-set">
+        <div class="question" data-q-start="1" data-q-end="5">
+          <div class="question-prompt">
+            <p><strong>Questions 1–5</strong><br>Do the following statements agree with the information given in the Reading Passage?</p>
+            <p>Write <strong>TRUE</strong>, <strong>FALSE</strong> or <strong>NOT GIVEN</strong>.</p>
+          </div>
+          <div class="tf-question" data-q-start="1"><div class="tf-question-line"><span class="tf-question-number">1</span><span class="tf-question-text">The TF NextStage stores planned to sell products to make life easier for older people.</span></div><div class="tf-options"><label class="tf-option"><input type="radio" name="q1" value="TRUE"> TRUE</label><label class="tf-option"><input type="radio" name="q1" value="FALSE"> FALSE</label><label class="tf-option"><input type="radio" name="q1" value="NOT GIVEN"> NOT GIVEN</label></div></div>
+          <div class="tf-question" data-q-start="2"><div class="tf-question-line"><span class="tf-question-number">2</span><span class="tf-question-text">TF's market research indicated that people liked the products.</span></div><div class="tf-options"><label class="tf-option"><input type="radio" name="q2" value="TRUE"> TRUE</label><label class="tf-option"><input type="radio" name="q2" value="FALSE"> FALSE</label><label class="tf-option"><input type="radio" name="q2" value="NOT GIVEN"> NOT GIVEN</label></div></div>
+          <div class="tf-question" data-q-start="3"><div class="tf-question-line"><span class="tf-question-number">3</span><span class="tf-question-text">It cost more than expected to remodel the TF stores.</span></div><div class="tf-options"><label class="tf-option"><input type="radio" name="q3" value="TRUE"> TRUE</label><label class="tf-option"><input type="radio" name="q3" value="FALSE"> FALSE</label><label class="tf-option"><input type="radio" name="q3" value="NOT GIVEN"> NOT GIVEN</label></div></div>
+          <div class="tf-question" data-q-start="4"><div class="tf-question-line"><span class="tf-question-number">4</span><span class="tf-question-text">The TF NextStage coffee shops sold their own brand of food and drink.</span></div><div class="tf-options"><label class="tf-option"><input type="radio" name="q4" value="TRUE"> TRUE</label><label class="tf-option"><input type="radio" name="q4" value="FALSE"> FALSE</label><label class="tf-option"><input type="radio" name="q4" value="NOT GIVEN"> NOT GIVEN</label></div></div>
+          <div class="tf-question" data-q-start="5"><div class="tf-question-line"><span class="tf-question-number">5</span><span class="tf-question-text">TF NextStage customers liked the atmosphere in the new stores.</span></div><div class="tf-options"><label class="tf-option"><input type="radio" name="q5" value="TRUE"> TRUE</label><label class="tf-option"><input type="radio" name="q5" value="FALSE"> FALSE</label><label class="tf-option"><input type="radio" name="q5" value="NOT GIVEN"> NOT GIVEN</label></div></div>
+        </div>
+
+        <div class="question" data-q-start="6" data-q-end="13">
+          <div class="question-prompt">
+            <p><strong>Questions 6–13</strong><br>Complete the notes below.</p>
+            <p>Choose <strong>NO MORE THAN TWO WORDS</strong> from the passage for each answer.</p>
+          </div>
+          <div class="summary-text">
+            <p class="centered-title">Feedback from experts</p>
+            <p><strong>Donna Sturgess</strong></p>
+            <p>Problems with customer research</p>
+            <ul>
+              <li>&bull;&nbsp; TF team limited their research to attitudes that occur at a <input type="text" class="answer-input" id="q6" placeholder="6"> level in customers' minds</li>
+              <li>&bull;&nbsp; TF didn't consider customers' emotions</li>
+            </ul>
+            <p>How another company dealt with a similar problem:</p>
+            <ul>
+              <li>&bull;&nbsp; Product: Alli</li>
+              <li>&bull;&nbsp; Use: help people achieve <input type="text" class="answer-input" id="q7" placeholder="7"></li>
+              <li>&bull;&nbsp; Marketing aim: help customers see the product in a positive way by:</li>
+              <li>&nbsp;&nbsp;&nbsp;- giving the product a <input type="text" class="answer-input" id="q8" placeholder="8"> that seems helpful and supportive</li>
+              <li>&nbsp;&nbsp;&nbsp;- giving the product a reusable <input type="text" class="answer-input" id="q9" placeholder="9"></li>
+            </ul>
+            <p>Market research:</p>
+            <ul>
+              <li>&bull;&nbsp; does not need to be complex</li>
+              <li>&bull;&nbsp; good information can come from interviews or studying the <input type="text" class="answer-input" id="q10" placeholder="10"> of consumers in the home</li>
+            </ul>
+            <p><strong>Alex Lee</strong></p>
+            <p>Problem:</p>
+            <ul>
+              <li>&bull;&nbsp; customers are attracted to the ideal not the reality, e.g. ads for surf gear</li>
+            </ul>
+            <p>How my company dealt with a similar problem:</p>
+            <ul>
+              <li>&bull;&nbsp; we organized <input type="text" class="answer-input" id="q11" placeholder="11"> to find out what images customers associate with our products</li>
+              <li>&bull;&nbsp; we do not call our products helping tools in our marketing campaigns</li>
+            </ul>
+            <p>Market research:</p>
+            <ul>
+              <li>&bull;&nbsp; can be basic, e.g. by doing <input type="text" class="answer-input" id="q12" placeholder="12"></li>
+              <li>&bull;&nbsp; company executives should follow their <input type="text" class="answer-input" id="q13" placeholder="13"></li>
+            </ul>
+          </div>
+        </div>
+      </div><!-- /questions-1 -->
+
+      <!-- QUESTIONS SET 2 -->
+      <div id="questions-2" class="question-set hidden">
+        <div class="question" data-q-start="14" data-q-end="19">
+          <div class="question-prompt">
+            <p><strong>Questions 14–19</strong><br>Reading Passage 2 has six paragraphs, <strong>A–F</strong>.</p>
+            <p>Choose the correct heading for each paragraph from the list of headings below.</p>
+          </div>
+          <div style="border:1px solid #ddd;border-radius:5px;background:#f9f9f9;padding:12px 16px;margin-bottom:15px;">
+            <p><strong>List of Headings</strong></p>
+            <ul style="list-style:none;padding-left:0;">
+              <li>i&nbsp;&nbsp;The effect of man-made imitations on insects</li>
+              <li>ii&nbsp;&nbsp;The need to instruct additional insect guides</li>
+              <li>iii&nbsp;&nbsp;Signals used by certain insects to indicate a discovery</li>
+              <li>iv&nbsp;&nbsp;How urgency can affect the process of finding a new home</li>
+              <li>v&nbsp;&nbsp;The use of trained insects in testing scientific theories</li>
+              <li>vi&nbsp;&nbsp;The use of virtual scenarios in the study of insect behaviour</li>
+              <li>vii&nbsp;&nbsp;How the number of decision-makers affects the decision</li>
+            </ul>
+          </div>
+          <div class="matching-form-container">
+            <div class="matching-form-row"><label class="matching-form-label"><strong>14</strong>&nbsp;&nbsp;Paragraph A</label><select class="answer-input" id="q14"><option value=""></option><option>i</option><option>ii</option><option>iii</option><option>iv</option><option>v</option><option>vi</option><option>vii</option></select></div>
+            <div class="matching-form-row"><label class="matching-form-label"><strong>15</strong>&nbsp;&nbsp;Paragraph B</label><select class="answer-input" id="q15"><option value=""></option><option>i</option><option>ii</option><option>iii</option><option>iv</option><option>v</option><option>vi</option><option>vii</option></select></div>
+            <div class="matching-form-row"><label class="matching-form-label"><strong>16</strong>&nbsp;&nbsp;Paragraph C</label><select class="answer-input" id="q16"><option value=""></option><option>i</option><option>ii</option><option>iii</option><option>iv</option><option>v</option><option>vi</option><option>vii</option></select></div>
+            <div class="matching-form-row"><label class="matching-form-label"><strong>17</strong>&nbsp;&nbsp;Paragraph D</label><select class="answer-input" id="q17"><option value=""></option><option>i</option><option>ii</option><option>iii</option><option>iv</option><option>v</option><option>vi</option><option>vii</option></select></div>
+            <div class="matching-form-row"><label class="matching-form-label"><strong>18</strong>&nbsp;&nbsp;Paragraph E</label><select class="answer-input" id="q18"><option value=""></option><option>i</option><option>ii</option><option>iii</option><option>iv</option><option>v</option><option>vi</option><option>vii</option></select></div>
+            <div class="matching-form-row"><label class="matching-form-label"><strong>19</strong>&nbsp;&nbsp;Paragraph F</label><select class="answer-input" id="q19"><option value=""></option><option>i</option><option>ii</option><option>iii</option><option>iv</option><option>v</option><option>vi</option><option>vii</option></select></div>
+          </div>
+        </div>
+
+        <div class="question" data-q-start="20" data-q-end="23">
+          <div class="question-prompt">
+            <p><strong>Questions 20–23</strong><br>Look at the following findings (Questions 20–23) and the list of academics below.</p>
+            <p>Match each finding with the correct academic, <strong>A–D</strong>.</p>
+          </div>
+          <div style="border:1px solid #ddd;border-radius:5px;background:#f9f9f9;padding:12px 16px;margin-bottom:15px;">
+            <p><strong>List of Academics</strong></p>
+            <ul style="list-style:none;padding-left:0;">
+              <li>A&nbsp;&nbsp;Nicolas de Condorcet</li>
+              <li>B&nbsp;&nbsp;Christian List and colleagues</li>
+              <li>C&nbsp;&nbsp;Jose Halloy</li>
+              <li>D&nbsp;&nbsp;Nigel Franks and colleagues</li>
+            </ul>
+          </div>
+          <div class="matching-form-container">
+            <div class="matching-form-row"><label class="matching-form-label"><strong>20</strong>&nbsp;&nbsp;Certain members can influence the rest of the group to alter a previous decision.</label><select class="answer-input" id="q20"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+            <div class="matching-form-row"><label class="matching-form-label"><strong>21</strong>&nbsp;&nbsp;Individual verification of a proposed choice is important for a successful decision outcome.</label><select class="answer-input" id="q21"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+            <div class="matching-form-row"><label class="matching-form-label"><strong>22</strong>&nbsp;&nbsp;The more individuals taking part in a decision, the better the decision will be.</label><select class="answer-input" id="q22"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+            <div class="matching-form-row"><label class="matching-form-label"><strong>23</strong>&nbsp;&nbsp;The decision-making process of certain insects produces excellent results even when fine distinctions are required.</label><select class="answer-input" id="q23"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+          </div>
+        </div>
+
+        <div class="question" data-q-start="24" data-q-end="26">
+          <div class="question-prompt">
+            <p><strong>Questions 24–26</strong><br>Complete the summary below.</p>
+            <p>Choose <strong>ONE WORD ONLY</strong> from the passage for each answer.</p>
+          </div>
+          <div class="summary-text">
+            <p>A Bristol University study looked at how insects make decisions when their home has been <input type="text" class="answer-input" id="q24" placeholder="24">. The ants in the experiment relied on the use of individuals called <input type="text" class="answer-input" id="q25" placeholder="25"> to find a new nest and efficiently direct the others to go there. The study concluded that the effective implementation of the ants' decision meant that the insects could change homes quickly. The study emphasised the necessity, for people as well as insects, of having active <input type="text" class="answer-input" id="q26" placeholder="26"> in order to execute decisions successfully.</p>
+          </div>
+        </div>
+      </div><!-- /questions-2 -->
+
+      <!-- QUESTIONS SET 3 -->
+      <div id="questions-3" class="question-set hidden">
+        <div class="question" data-q-start="27" data-q-end="31">
+          <div class="question-prompt">
+            <p><strong>Questions 27–31</strong><br>Choose the correct letter, <strong>A, B, C</strong> or <strong>D</strong>.</p>
+          </div>
+          <p style="margin-bottom:8px;"><strong>27</strong> According to the writer, which marketing technique attempts to make consumers stay in a shop for longer?</p>
+          <div class="single-choice-container" style="margin-bottom:20px;">
+            <div class="single-choice"><label><input type="radio" name="q27" value="A"> A &nbsp;&nbsp;playing appealing music.</label></div>
+            <div class="single-choice"><label><input type="radio" name="q27" value="B"> B &nbsp;&nbsp;emitting pleasant scents.</label></div>
+            <div class="single-choice"><label><input type="radio" name="q27" value="C"> C &nbsp;&nbsp;displaying attractive posters.</label></div>
+            <div class="single-choice"><label><input type="radio" name="q27" value="D"> D &nbsp;&nbsp;making in-store announcements.</label></div>
+          </div>
+          <p style="margin-bottom:8px;"><strong>28</strong> The writer mentions bottled water in order to show that</p>
+          <div class="single-choice-container" style="margin-bottom:20px;">
+            <div class="single-choice"><label><input type="radio" name="q28" value="A"> A &nbsp;&nbsp;consumers buy it because of the fact that it is marketed.</label></div>
+            <div class="single-choice"><label><input type="radio" name="q28" value="B"> B &nbsp;&nbsp;people purchase it despite the fact that it has no taste.</label></div>
+            <div class="single-choice"><label><input type="radio" name="q28" value="C"> C &nbsp;&nbsp;marketers need not do taste tests when a campaign is effective.</label></div>
+            <div class="single-choice"><label><input type="radio" name="q28" value="D"> D &nbsp;&nbsp;tests prove that people cannot differentiate it from tap water.</label></div>
+          </div>
+          <p style="margin-bottom:8px;"><strong>29</strong> According to the writer, socially transmitted food preference occurs when</p>
+          <div class="single-choice-container" style="margin-bottom:20px;">
+            <div class="single-choice"><label><input type="radio" name="q29" value="A"> A &nbsp;&nbsp;only dominant members of an animal group influence what others eat.</label></div>
+            <div class="single-choice"><label><input type="radio" name="q29" value="B"> B &nbsp;&nbsp;the same types of animals naturally prefer the same types of food.</label></div>
+            <div class="single-choice"><label><input type="radio" name="q29" value="C"> C &nbsp;&nbsp;animals are influenced by what any other animals of the same species eat.</label></div>
+            <div class="single-choice"><label><input type="radio" name="q29" value="D"> D &nbsp;&nbsp;a food type is more desirable because an animal views that food as scarce.</label></div>
+          </div>
+          <p style="margin-bottom:8px;"><strong>30</strong> According to the writer, how is learning by observation and imitation a useful feature of the brain?</p>
+          <div class="single-choice-container" style="margin-bottom:20px;">
+            <div class="single-choice"><label><input type="radio" name="q30" value="A"> A &nbsp;&nbsp;it helps people overcome challenges.</label></div>
+            <div class="single-choice"><label><input type="radio" name="q30" value="B"> B &nbsp;&nbsp;positive models can influence social behaviour.</label></div>
+            <div class="single-choice"><label><input type="radio" name="q30" value="C"> C &nbsp;&nbsp;it can give an advantage when communicating with others.</label></div>
+            <div class="single-choice"><label><input type="radio" name="q30" value="D"> D &nbsp;&nbsp;cultural norms and relationships can be understood more easily.</label></div>
+          </div>
+          <p style="margin-bottom:8px;"><strong>31</strong> According to the writer, how does television advertising exploit the human tendency to imitate others?</p>
+          <div class="single-choice-container" style="margin-bottom:20px;">
+            <div class="single-choice"><label><input type="radio" name="q31" value="A"> A &nbsp;&nbsp;It shows buying behaviour that marketers want to encourage in viewers.</label></div>
+            <div class="single-choice"><label><input type="radio" name="q31" value="B"> B &nbsp;&nbsp;It features people who have a desirable image.</label></div>
+            <div class="single-choice"><label><input type="radio" name="q31" value="C"> C &nbsp;&nbsp;It shows older people whom teenagers admire.</label></div>
+            <div class="single-choice"><label><input type="radio" name="q31" value="D"> D &nbsp;&nbsp;It features successful people endorsing products responsible for their success.</label></div>
+          </div>
+        </div>
+
+        <div class="question" data-q-start="32" data-q-end="36">
+          <div class="question-prompt">
+            <p><strong>Questions 32–36</strong><br>Do the following statements agree with the claims of the writer in Reading Passage?</p>
+            <p>Write <strong>YES</strong>, <strong>NO</strong> or <strong>NOT GIVEN</strong>.</p>
+          </div>
+          <div class="tf-question" data-q-start="32"><div class="tf-question-line"><span class="tf-question-number">32</span><span class="tf-question-text">The diamond campaign worked by making a connection in people's minds between diamonds and luxury.</span></div><div class="tf-options"><label class="tf-option"><input type="radio" name="q32" value="YES"> YES</label><label class="tf-option"><input type="radio" name="q32" value="NO"> NO</label><label class="tf-option"><input type="radio" name="q32" value="NOT GIVEN"> NOT GIVEN</label></div></div>
+          <div class="tf-question" data-q-start="33"><div class="tf-question-line"><span class="tf-question-number">33</span><span class="tf-question-text">People are more aware of visual marketing than auditory marketing.</span></div><div class="tf-options"><label class="tf-option"><input type="radio" name="q33" value="YES"> YES</label><label class="tf-option"><input type="radio" name="q33" value="NO"> NO</label><label class="tf-option"><input type="radio" name="q33" value="NOT GIVEN"> NOT GIVEN</label></div></div>
+          <div class="tf-question" data-q-start="34"><div class="tf-question-line"><span class="tf-question-number">34</span><span class="tf-question-text">The campaign advertising diamonds had a positive influence on society.</span></div><div class="tf-options"><label class="tf-option"><input type="radio" name="q34" value="YES"> YES</label><label class="tf-option"><input type="radio" name="q34" value="NO"> NO</label><label class="tf-option"><input type="radio" name="q34" value="NOT GIVEN"> NOT GIVEN</label></div></div>
+          <div class="tf-question" data-q-start="35"><div class="tf-question-line"><span class="tf-question-number">35</span><span class="tf-question-text">There is still some uncertainty about whether animals copy the behaviour of the most powerful animals among them.</span></div><div class="tf-options"><label class="tf-option"><input type="radio" name="q35" value="YES"> YES</label><label class="tf-option"><input type="radio" name="q35" value="NO"> NO</label><label class="tf-option"><input type="radio" name="q35" value="NOT GIVEN"> NOT GIVEN</label></div></div>
+          <div class="tf-question" data-q-start="36"><div class="tf-question-line"><span class="tf-question-number">36</span><span class="tf-question-text">Consumers make a logical connection between celebrities' achievements and the products they promote.</span></div><div class="tf-options"><label class="tf-option"><input type="radio" name="q36" value="YES"> YES</label><label class="tf-option"><input type="radio" name="q36" value="NO"> NO</label><label class="tf-option"><input type="radio" name="q36" value="NOT GIVEN"> NOT GIVEN</label></div></div>
+        </div>
+
+        <div class="question" data-q-start="37" data-q-end="40">
+          <div class="question-prompt">
+            <p><strong>Questions 37–40</strong><br>Complete each sentence with the correct ending, <strong>A–G</strong>, below.</p>
+          </div>
+          <div style="border:1px solid #ddd;border-radius:5px;background:#f9f9f9;padding:12px 16px;margin-bottom:15px;">
+            <ul style="list-style:none;padding-left:0;">
+              <li>A&nbsp;&nbsp;people imitated behaviour that was linked with success.</li>
+              <li>B&nbsp;&nbsp;younger animals of a certain species are more likely to imitate each other.</li>
+              <li>C&nbsp;&nbsp;an animal would imitate another that had higher status.</li>
+              <li>D&nbsp;&nbsp;imitation of popular sportspeople has occurred for many decades.</li>
+              <li>E&nbsp;&nbsp;products are marketed to potential consumers who are unaware that marketing is occurring.</li>
+              <li>F&nbsp;&nbsp;animals can develop new habits by observation.</li>
+              <li>G&nbsp;&nbsp;incentives are provided for consumers who behave in a certain way.</li>
+            </ul>
+          </div>
+          <div class="matching-form-container">
+            <div class="matching-form-row"><label class="matching-form-label"><strong>37</strong>&nbsp;&nbsp;The behaviour of the monkeys on the island of Koshima showed that</label><select class="answer-input" id="q37"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option></select></div>
+            <div class="matching-form-row"><label class="matching-form-label"><strong>38</strong>&nbsp;&nbsp;Primatologist Frans de Waal found that</label><select class="answer-input" id="q38"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option></select></div>
+            <div class="matching-form-row"><label class="matching-form-label"><strong>39</strong>&nbsp;&nbsp;Dick Fosbury is mentioned in order to show that</label><select class="answer-input" id="q39"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option></select></div>
+            <div class="matching-form-row"><label class="matching-form-label"><strong>40</strong>&nbsp;&nbsp;A feature of some modern marketing campaigns is that</label><select class="answer-input" id="q40"><option value=""></option><option>A</option><option>B</option><option>C</option><option>D</option><option>E</option><option>F</option><option>G</option></select></div>
+          </div>
+        </div>
+      </div><!-- /questions-3 -->
+
+    </div><!-- /questions-panel -->
+  </div><!-- /panels-container -->
+</div><!-- /main-container -->
+
+<!-- NAV ARROWS -->
+<div class="nav-arrows" id="nav-arrows">
+  <button class="nav-arrow" id="prevBtn" onclick="previousQuestion()">&#8249;</button>
+  <button class="nav-arrow" id="nextBtn" onclick="nextQuestion()">&#8250;</button>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="nav-row" id="nav-row">
+  <div class="footer__questionWrapper___1tZ46" id="part-nav-1">
+    <button class="footer__questionNo___3WNct" onclick="switchToPart(1)"><span class="section-prefix">Part </span><span class="sectionNr">1</span><span class="attemptedCount">0 of 13</span></button>
+    <div class="footer__subquestionWrapper___9GgoP">
+      <button class="subQuestion" onclick="goToQuestion(1)">1</button><button class="subQuestion" onclick="goToQuestion(2)">2</button><button class="subQuestion" onclick="goToQuestion(3)">3</button><button class="subQuestion" onclick="goToQuestion(4)">4</button><button class="subQuestion" onclick="goToQuestion(5)">5</button><button class="subQuestion" onclick="goToQuestion(6)">6</button><button class="subQuestion" onclick="goToQuestion(7)">7</button><button class="subQuestion" onclick="goToQuestion(8)">8</button><button class="subQuestion" onclick="goToQuestion(9)">9</button><button class="subQuestion" onclick="goToQuestion(10)">10</button><button class="subQuestion" onclick="goToQuestion(11)">11</button><button class="subQuestion" onclick="goToQuestion(12)">12</button><button class="subQuestion" onclick="goToQuestion(13)">13</button>
+    </div>
+  </div>
+  <div class="footer__questionWrapper___1tZ46" id="part-nav-2">
+    <button class="footer__questionNo___3WNct" onclick="switchToPart(2)"><span class="section-prefix">Part </span><span class="sectionNr">2</span><span class="attemptedCount">0 of 13</span></button>
+    <div class="footer__subquestionWrapper___9GgoP">
+      <button class="subQuestion" onclick="goToQuestion(14)">14</button><button class="subQuestion" onclick="goToQuestion(15)">15</button><button class="subQuestion" onclick="goToQuestion(16)">16</button><button class="subQuestion" onclick="goToQuestion(17)">17</button><button class="subQuestion" onclick="goToQuestion(18)">18</button><button class="subQuestion" onclick="goToQuestion(19)">19</button><button class="subQuestion" onclick="goToQuestion(20)">20</button><button class="subQuestion" onclick="goToQuestion(21)">21</button><button class="subQuestion" onclick="goToQuestion(22)">22</button><button class="subQuestion" onclick="goToQuestion(23)">23</button><button class="subQuestion" onclick="goToQuestion(24)">24</button><button class="subQuestion" onclick="goToQuestion(25)">25</button><button class="subQuestion" onclick="goToQuestion(26)">26</button>
+    </div>
+  </div>
+  <div class="footer__questionWrapper___1tZ46" id="part-nav-3">
+    <button class="footer__questionNo___3WNct" onclick="switchToPart(3)"><span class="section-prefix">Part </span><span class="sectionNr">3</span><span class="attemptedCount">0 of 14</span></button>
+    <div class="footer__subquestionWrapper___9GgoP">
+      <button class="subQuestion" onclick="goToQuestion(27)">27</button><button class="subQuestion" onclick="goToQuestion(28)">28</button><button class="subQuestion" onclick="goToQuestion(29)">29</button><button class="subQuestion" onclick="goToQuestion(30)">30</button><button class="subQuestion" onclick="goToQuestion(31)">31</button><button class="subQuestion" onclick="goToQuestion(32)">32</button><button class="subQuestion" onclick="goToQuestion(33)">33</button><button class="subQuestion" onclick="goToQuestion(34)">34</button><button class="subQuestion" onclick="goToQuestion(35)">35</button><button class="subQuestion" onclick="goToQuestion(36)">36</button><button class="subQuestion" onclick="goToQuestion(37)">37</button><button class="subQuestion" onclick="goToQuestion(38)">38</button><button class="subQuestion" onclick="goToQuestion(39)">39</button><button class="subQuestion" onclick="goToQuestion(40)">40</button>
+    </div>
+  </div>
+  <button class="footer__deliverButton___3FM07" style="display:none;">Submit Test</button>
+</nav>
+
+<!-- FIXED SUBMIT BUTTON bottom-right -->
+<button class="submit-btn-fixed" id="submit-btn-fixed" onclick="submitTest()">Submit Test ✓</button>
+
+<!-- CONTEXT MENU -->
+<div class="context-menu" id="contextMenu">
+  <div class="context-menu-item" id="highlight-btn">🖊 Highlight</div>
+  <div class="context-menu-item" id="note-btn">📝 Note</div>
+  <div class="context-menu-item" id="clear-btn" style="display:none;">✕ Remove highlight</div>
+  <div class="context-menu-item" id="clear-all-btn">🗑 Clear all</div>
+</div>
+
+<script>
+const PASSWORD = '1234';
+let candidateId = '';
+let currentPassage = 1;
+let currentQuestion = 1;
+let timeInSeconds = 3600;
+let timerInterval = null;
+let testCompleted = false;
+let draggedItem = null;
+let savedRange = null;
+let contextTargetEl = null;
+
+const correctAnswers = {
+  '1':'TRUE','2':'TRUE','3':'FALSE','4':'FALSE','5':'FALSE',
+  '6':'surface','7':'weight loss','8':'name','9':'container','10':'behavior','11':'focus groups','12':'surveys','13':'instincts',
+  '14':'vii','15':'iii','16':'vi','17':'v','18':'iv','19':'ii',
+  '20':'C','21':'B','22':'A','23':'B',
+  '24':'threatened','25':'scouts','26':'leaders',
+  '27':'B','28':'A','29':'C','30':'C','31':'B',
+  '32':'NO','33':'NOT GIVEN','34':'YES','35':'YES','36':'NO',
+  '37':'F','38':'C','39':'A','40':'E'
+};
+
+// ---- LOGIN ----
+function submitLogin() {
+  if (document.getElementById('password').value === PASSWORD) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('candidate-screen').style.display = 'flex';
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+  }
+}
+
+function submitCandidate() {
+  const val = document.getElementById('candidate-id-input').value.trim();
+  if (val.length < 1) { document.getElementById('candidate-error').style.display = 'block'; return; }
+  candidateId = val;
+  document.getElementById('header-candidate-id').textContent = candidateId;
+  document.getElementById('intro-candidate-name').textContent = candidateId;
+  document.getElementById('candidate-screen').style.display = 'none';
+  const intro = document.getElementById('intro-screen');
+  intro.style.display = 'flex';
+  intro.style.flexDirection = 'column';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('password').addEventListener('keydown', e => { if (e.key === 'Enter') submitLogin(); });
+  document.getElementById('candidate-id-input').addEventListener('keydown', e => { if (e.key === 'Enter') submitCandidate(); });
+  document.getElementById('back-to-login').addEventListener('click', function() {
+    document.getElementById('candidate-screen').style.display = 'none';
+    document.getElementById('login-screen').style.display = 'flex';
+  });
+
+  document.getElementById('start-test-btn').addEventListener('click', function() {
+    document.getElementById('intro-screen').style.display = 'none';
+    document.getElementById('main-header').style.display = 'flex';
+    document.getElementById('main-container').style.display = 'flex';
+    document.getElementById('nav-arrows').style.display = 'flex';
+    document.getElementById('nav-row').style.display = 'flex';
+    document.getElementById('submit-btn-fixed').style.display = 'block';
+    switchToPart(1);
+    initDragDrop();
+    setupInputListeners();
+    setupCheckboxLimits();
+    updateAllIndicators();
+    startTimer();
+    initResizer();
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', function() {
+    if (confirm('Logout?')) window.location.reload();
+  });
+
+  document.getElementById('dark-toggle').addEventListener('click', function() {
+    document.body.classList.toggle('dark');
+    this.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+  });
+
+  // Context menu
+  document.getElementById('highlight-btn').addEventListener('click', doHighlight);
+  document.getElementById('note-btn').addEventListener('click', doNote);
+  document.getElementById('clear-btn').addEventListener('click', doClear);
+  document.getElementById('clear-all-btn').addEventListener('click', doClearAll);
+});
+
+// ---- TIMER ----
+function startTimer() {
+  timerInterval = setInterval(function() {
+    timeInSeconds--;
+    const m = Math.floor(timeInSeconds / 60);
+    const s = timeInSeconds % 60;
+    const display = document.getElementById('timer-display');
+    display.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+    if (timeInSeconds <= 300) display.classList.add('timer-warning');
+    if (timeInSeconds <= 0) { clearInterval(timerInterval); handleTimeUp(); }
+  }, 1000);
+}
+
+function handleTimeUp() {
+  if (testCompleted) return;
+  testCompleted = true;
+  alert("Time's up! Submitting your test.");
+  downloadPDF();
+  setTimeout(() => { document.getElementById('completion-screen').style.display = 'flex'; }, 1500);
+}
+
+// ---- PART SWITCHING ----
+function switchToPart(n) {
+  currentPassage = n;
+  document.querySelectorAll('.reading-passage,.question-set,.part-header').forEach(el => el.classList.add('hidden'));
+  document.getElementById('passage-text-' + n).classList.remove('hidden');
+  document.getElementById('questions-' + n).classList.remove('hidden');
+  const headers = { 1:'<strong>Part 1</strong> — Read the text and answer questions 1–13.', 2:'<strong>Part 2</strong> — Read the text and answer questions 14–26.', 3:'<strong>Part 3</strong> — Read the text and answer questions 27–40.' };
+  document.getElementById('part-header-bar').innerHTML = headers[n];
+  document.querySelectorAll('.footer__questionWrapper___1tZ46').forEach((w, i) => w.classList.toggle('selected', i + 1 === n));
+  const firstQ = {1:1, 2:14, 3:27}[n];
+  goToQuestion(firstQ);
+}
+
+// ---- NAVIGATION ----
+function goToQuestion(qNum) {
+  currentQuestion = qNum;
+  let part = qNum <= 13 ? 1 : qNum <= 26 ? 2 : 3;
+  if (currentPassage !== part) { switchToPart(part); return; }
+
+  document.querySelectorAll('.subQuestion').forEach(b => b.classList.remove('active'));
+  const btn = document.querySelector('.subQuestion[onclick="goToQuestion(' + qNum + ')"]');
+  if (btn) btn.classList.add('active');
+
+  // Find and scroll to element
+  let el = document.getElementById('q' + qNum)
+    || document.querySelector('input[name="q' + qNum + '"]')
+    || document.querySelector('.tf-question[data-q-start="' + qNum + '"]')
+    || document.querySelector('.drop-zone[data-q-start="' + qNum + '"]')
+    || document.querySelector('.summary-drop-zone[data-q-start="' + qNum + '"]');
+
+  if (el) {
+    const block = el.closest('.question, .tf-question, .matching-question-item') || el.parentElement;
+    if (block) {
+      block.scrollIntoView({ behavior:'smooth', block:'center' });
+      block.classList.add('flash');
+      setTimeout(() => block.classList.remove('flash'), 1000);
+    }
+  }
+  updateAllIndicators();
+}
+
+function previousQuestion() { if (currentQuestion > 1) goToQuestion(currentQuestion - 1); }
+function nextQuestion() { if (currentQuestion < 40) goToQuestion(currentQuestion + 1); }
+window.previousQuestion = previousQuestion;
+window.nextQuestion = nextQuestion;
+window.goToQuestion = goToQuestion;
+window.switchToPart = switchToPart;
+
+// ---- INDICATORS ----
+function isAnswered(q) {
+  const txt = document.getElementById('q' + q);
+  if (txt && txt.value && txt.value.trim() !== '') return true;
+  if (document.querySelector('input[name="q' + q + '"]:checked')) return true;
+  const cbMap = { 23:'q23-24', 24:'q23-24', 25:'q25-26', 26:'q25-26' };
+  if (cbMap[q]) {
+    const checked = document.querySelectorAll('input[name="' + cbMap[q] + '"]:checked').length;
+    if (checked >= 2) return true;
+  }
+  const dz = document.querySelector('.drop-zone[data-q-start="' + q + '"]');
+  if (dz && dz.querySelector('.drag-item')) return true;
+  const sz = document.querySelector('.summary-drop-zone[data-q-start="' + q + '"]');
+  if (sz && sz.querySelector('.drag-item')) return true;
+  return false;
+}
+
+function updateAllIndicators() {
+  document.querySelectorAll('.subQuestion').forEach(btn => {
+    const m = (btn.getAttribute('onclick') || '').match(/goToQuestion\((\d+)\)/);
+    if (!m) return;
+    btn.classList.toggle('answered', isAnswered(parseInt(m[1])));
+  });
+  [[1,1,13],[2,14,26],[3,27,40]].forEach(([part, start, end]) => {
+    let count = 0;
+    for (let i = start; i <= end; i++) { if (isAnswered(i)) count++; }
+    const w = document.getElementById('part-nav-' + part);
+    if (w) { const ct = w.querySelector('.attemptedCount'); if (ct) ct.textContent = count + ' of ' + (end - start + 1); }
+  });
+}
+
+function setupInputListeners() {
+  document.querySelectorAll('.answer-input, input[type="radio"], input[type="checkbox"]').forEach(inp => {
+    inp.addEventListener('input', updateAllIndicators);
+    inp.addEventListener('change', updateAllIndicators);
+  });
+}
+
+function setupCheckboxLimits() {
+  ['q23-24','q25-26'].forEach(name => {
+    document.querySelectorAll('input[name="' + name + '"]').forEach(cb => {
+      cb.addEventListener('click', function() {
+        const checked = document.querySelectorAll('input[name="' + name + '"]:checked');
+        if (checked.length > 2) cb.checked = false;
+      });
+    });
+  });
+}
+
+// ---- DRAG AND DROP ----
+function initDragDrop() {
+  document.querySelectorAll('.drag-item').forEach(item => {
+    item.addEventListener('dragstart', e => { draggedItem = e.target; setTimeout(() => e.target.classList.add('dragging'), 0); });
+    item.addEventListener('dragend', e => { e.target.classList.remove('dragging'); draggedItem = null; });
+    // Touch support
+    item.addEventListener('touchstart', handleTouchStart, { passive: true });
+    item.addEventListener('touchmove', handleTouchMove, { passive: false });
+    item.addEventListener('touchend', handleTouchEnd);
+  });
+  document.querySelectorAll('.drop-zone, .summary-drop-zone, .matching-options-bank, .summary-options-bank').forEach(zone => {
+    zone.addEventListener('dragover', e => { e.preventDefault(); if (!draggedItem || draggedItem.dataset.dndGroup !== zone.dataset.dndGroup) return; zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', e => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); handleDropTo(zone); });
+  });
+}
+
+function handleDropTo(targetZone) {
+  if (!draggedItem || draggedItem.dataset.dndGroup !== targetZone.dataset.dndGroup) return;
+  const sourceZone = draggedItem.parentElement;
+  if (sourceZone === targetZone) return;
+  const isTargetZone = targetZone.classList.contains('drop-zone') || targetZone.classList.contains('summary-drop-zone');
+  const isSourceZone = sourceZone.classList.contains('drop-zone') || sourceZone.classList.contains('summary-drop-zone');
+  const existing = isTargetZone ? targetZone.querySelector('.drag-item') : null;
+  if (existing) { sourceZone.appendChild(existing); }
+  if (isSourceZone && !sourceZone.querySelector('.drag-item')) {
+    sourceZone.classList.remove('filled');
+    sourceZone.textContent = sourceZone.dataset.qStart || '';
+  }
+  targetZone.appendChild(draggedItem);
+  if (isTargetZone) { targetZone.classList.add('filled'); }
+  updateAllIndicators();
+}
+
+// Touch drag
+let touchDragged = null, touchClone = null;
+function handleTouchStart(e) {
+  touchDragged = this;
+  draggedItem = this;
+  const t = e.touches[0];
+  touchClone = this.cloneNode(true);
+  touchClone.style.cssText = 'position:fixed;pointer-events:none;opacity:.75;z-index:9999;background:white;border:1px solid #9c9c9c;padding:4px 10px;border-radius:4px;font-size:14px;';
+  touchClone.style.left = (t.clientX - 30) + 'px';
+  touchClone.style.top = (t.clientY - 20) + 'px';
+  document.body.appendChild(touchClone);
+}
+function handleTouchMove(e) {
+  if (!touchClone) return;
+  e.preventDefault();
+  const t = e.touches[0];
+  touchClone.style.left = (t.clientX - 30) + 'px';
+  touchClone.style.top = (t.clientY - 20) + 'px';
+}
+function handleTouchEnd(e) {
+  if (touchClone) { document.body.removeChild(touchClone); touchClone = null; }
+  if (!touchDragged) return;
+  const t = e.changedTouches[0];
+  const el = document.elementFromPoint(t.clientX, t.clientY);
+  const zone = el ? (el.closest('.drop-zone, .summary-drop-zone, .matching-options-bank, .summary-options-bank')) : null;
+  if (zone) handleDropTo(zone);
+  touchDragged = null;
+  draggedItem = null;
+}
+
+// ---- RESIZER ----
+function initResizer() {
+  const resizer = document.getElementById('resizer');
+  const passage = document.getElementById('passage-panel');
+  const questions = document.getElementById('questions-panel');
+  let isResizing = false, startX, startPassW, startQuestW;
+  resizer.addEventListener('mousedown', e => {
+    isResizing = true; startX = e.clientX;
+    startPassW = passage.offsetWidth; startQuestW = questions.offsetWidth;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  });
+  document.addEventListener('mousemove', e => {
+    if (!isResizing) return;
+    const dx = e.clientX - startX;
+    const newPassW = Math.max(200, startPassW + dx);
+    const newQuestW = Math.max(200, startQuestW - dx);
+    passage.style.flex = 'none';
+    passage.style.width = newPassW + 'px';
+    questions.style.flex = 'none';
+    questions.style.width = newQuestW + 'px';
+  });
+  document.addEventListener('mouseup', () => {
+    isResizing = false;
+    document.body.style.cursor = '';
+    document.body.style.userSelect = '';
+  });
+}
+
+// ---- HIGHLIGHT / CONTEXT MENU ----
+document.addEventListener('selectionchange', function() {
+  const sel = window.getSelection();
+  if (sel && sel.rangeCount > 0 && sel.toString().trim()) {
+    savedRange = sel.getRangeAt(0).cloneRange();
+  }
+});
+
+document.addEventListener('contextmenu', function(e) {
+  const hl = e.target.closest('.highlight, .comment-highlight');
+  const inPassage = e.target.closest('.passage-panel, .questions-panel');
+  if (!inPassage) return;
+  const sel = window.getSelection();
+  const text = sel ? sel.toString().trim() : '';
+  if (!text && !hl) return;
+  e.preventDefault();
+  const menu = document.getElementById('contextMenu');
+  contextTargetEl = hl || null;
+  document.getElementById('clear-btn').style.display = hl ? 'flex' : 'none';
+  menu.style.left = e.clientX + 'px';
+  menu.style.top = e.clientY + 'px';
+  menu.style.display = 'block';
+});
+
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('contextMenu');
+  if (!e.target.closest('.context-menu')) menu.style.display = 'none';
+});
+
+function doHighlight() {
+  if (!savedRange || !savedRange.toString().trim()) { document.getElementById('contextMenu').style.display = 'none'; return; }
+  try {
+    const span = document.createElement('span'); span.className = 'highlight';
+    savedRange.surroundContents(span);
+  } catch(ex) {
+    const tw = document.createTreeWalker(savedRange.commonAncestorContainer, NodeFilter.SHOW_TEXT);
+    let node, nodes = [], inRange = false;
+    while ((node = tw.nextNode())) {
+      if (node === savedRange.startContainer) inRange = true;
+      if (inRange) nodes.push(node);
+      if (node === savedRange.endContainer) break;
+    }
+    nodes.forEach((tn, i) => {
+      if (!tn.nodeValue.trim()) return;
+      let s = 0, end = tn.length;
+      if (i === 0 && tn === savedRange.startContainer) s = savedRange.startOffset;
+      if (i === nodes.length-1 && tn === savedRange.endContainer) end = savedRange.endOffset;
+      if (s >= end) return;
+      const sp = document.createElement('span'); sp.className = 'highlight';
+      sp.textContent = tn.nodeValue.slice(s, end);
+      const parent = tn.parentNode;
+      if (!parent) return;
+      if (s > 0) parent.insertBefore(document.createTextNode(tn.nodeValue.slice(0, s)), tn);
+      parent.insertBefore(sp, tn);
+      if (end < tn.length) parent.insertBefore(document.createTextNode(tn.nodeValue.slice(end)), tn);
+      parent.removeChild(tn);
+    });
+  }
+  window.getSelection().removeAllRanges();
+  savedRange = null;
+  document.getElementById('contextMenu').style.display = 'none';
+}
+
+function doNote() {
+  const note = prompt('Enter your note:');
+  if (note && savedRange && !savedRange.collapsed) {
+    const span = document.createElement('span'); span.className = 'comment-highlight';
+    const tip = document.createElement('span'); tip.className = 'comment-tooltip'; tip.textContent = note;
+    span.appendChild(savedRange.extractContents()); span.appendChild(tip);
+    savedRange.insertNode(span);
+  }
+  window.getSelection().removeAllRanges(); savedRange = null;
+  document.getElementById('contextMenu').style.display = 'none';
+}
+
+function doClear() {
+  if (contextTargetEl) {
+    const parent = contextTargetEl.parentNode;
+    while (contextTargetEl.firstChild) parent.insertBefore(contextTargetEl.firstChild, contextTargetEl);
+    parent.removeChild(contextTargetEl); parent.normalize();
+    contextTargetEl = null;
+  }
+  document.getElementById('contextMenu').style.display = 'none';
+}
+
+function doClearAll() {
+  document.querySelectorAll('.highlight,.comment-highlight').forEach(el => {
+    const parent = el.parentNode;
+    while (el.firstChild) parent.insertBefore(el.firstChild, el);
+    parent.removeChild(el); parent.normalize();
+  });
+  document.getElementById('contextMenu').style.display = 'none';
+}
+
+// ---- SUBMIT & PDF ----
+function submitTest() {
+  if (testCompleted) return;
+  if (!confirm('Submit test and download your PDF results?')) return;
+  testCompleted = true;
+  clearInterval(timerInterval);
+  try {
+    downloadPDF();
+  } catch(e) {
+    console.error('PDF error:', e);
+    alert('Could not generate PDF. Please try again.\nError: ' + e.message);
+    testCompleted = false;
+    return;
+  }
+  setTimeout(() => { document.getElementById('completion-screen').style.display = 'flex'; }, 1500);
+  setTimeout(() => { window.location.href = 'Writing.html'; }, 3000);
+}
+
+function getUserAnswer(q) {
+  const txt = document.getElementById('q' + q);
+  if (txt && (txt.tagName === 'INPUT' || txt.tagName === 'SELECT')) return txt.value.trim();
+  const radio = document.querySelector('input[name="q' + q + '"]:checked');
+  if (radio) return radio.value;
+  const cbMap = { 23:'q23-24', 24:'q23-24', 25:'q25-26', 26:'q25-26' };
+  if (cbMap[q]) {
+    const vals = Array.from(document.querySelectorAll('input[name="' + cbMap[q] + '"]:checked')).map(c => c.value).sort();
+    const idx = (q === 23 || q === 25) ? 0 : 1;
+    return vals[idx] || '';
+  }
+  const dz = document.querySelector('.drop-zone[data-q-start="' + q + '"]');
+  if (dz && dz.querySelector('.drag-item')) return dz.querySelector('.drag-item').dataset.value || '';
+  const sz = document.querySelector('.summary-drop-zone[data-q-start="' + q + '"]');
+  if (sz && sz.querySelector('.drag-item')) return sz.querySelector('.drag-item').dataset.value || '';
+  return '';
+}
+
+function checkCorrect(userAns, correct) {
+  if (!userAns) return false;
+  const u = userAns.trim().toLowerCase();
+  if (Array.isArray(correct)) return correct.some(c => u === c.toLowerCase());
+  return u === String(correct).toLowerCase();
+}
+
+function calculateBand(score) {
+  if (score >= 39) return '9.0';
+  const map = {38:'8.5',37:'8.5',36:'8.0',35:'8.0',34:'7.5',33:'7.5',32:'7.0',31:'7.0',30:'7.0',29:'6.5',28:'6.5',27:'6.5',26:'6.0',25:'6.0',24:'6.0',23:'5.5',22:'5.5',21:'5.5',20:'5.5',19:'5.0',18:'5.0',17:'5.0',16:'5.0',15:'5.0',14:'4.5',13:'4.5',12:'4.0',11:'4.0',10:'4.0',9:'3.5',8:'3.5',7:'3.0',6:'3.0',5:'2.5',4:'2.5'};
+  return map[score] || '0.0';
+}
+
+function downloadPDF() {
+  if (!window.jspdf || !window.jspdf.jsPDF) throw new Error('jsPDF not loaded. Check your internet connection.');
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  let score = 0;
+  const results = [];
+  for (let i = 1; i <= 40; i++) {
+    const user = getUserAnswer(i);
+    const correct = correctAnswers[String(i)];
+    const ok = checkCorrect(user, correct);
+    if (ok) score++;
+    results.push({ q: i, user: user || '—', correct: Array.isArray(correct) ? correct[0] : correct, ok });
+  }
+  const band = calculateBand(score);
+  doc.setFontSize(18); doc.setFont(undefined, 'bold');
+  doc.text('IELTS Reading Test Results', 105, 20, { align: 'center' });
+  doc.setFontSize(14); doc.setFont(undefined, 'normal');
+  doc.text('Score: ' + score + ' / 40', 20, 40);
+  doc.text('Band Score: ' + band, 20, 50);
+  doc.text('Candidate: ' + candidateId, 20, 60);
+  doc.text('Date: ' + new Date().toLocaleDateString(), 20, 70);
+  doc.setFontSize(11);
+  doc.setFont(undefined, 'bold');
+  doc.text('Q', 20, 90); doc.text('Your Answer', 35, 90); doc.text('Correct', 100, 90); doc.text('Result', 155, 90);
+  doc.setFont(undefined, 'normal');
+  let y = 100;
+  results.forEach(r => {
+    doc.setTextColor('#000000');
+    doc.text(String(r.q), 20, y);
+    doc.text(String(r.user), 35, y);
+    doc.text(String(r.correct), 100, y);
+    doc.setTextColor(r.ok ? '#1a7a1a' : '#c0392b');
+    doc.text(r.ok ? 'Correct' : 'Wrong', 155, y);
+    y += 8;
+    if (y > 280) { doc.addPage(); y = 20; }
+  });
+  doc.setTextColor('#000000');
+  doc.save('IELTS_Reading_' + candidateId + '.pdf');
+}
+</script>
+</body>
+</html>
